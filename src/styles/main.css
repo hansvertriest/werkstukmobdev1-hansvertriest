@@ -1,0 +1,15 @@
+/**
+ * The main.css styles
+ */
+
+body {
+    font-size: 12px;
+    margin: 0 auto;
+    background: #fefefe;
+    height: 100vh;
+}
+
+#app {
+    height: 100%;
+    position: relative;
+}
