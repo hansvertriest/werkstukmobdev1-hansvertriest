@@ -1,3 +1,7 @@
+// import babel polyfill
+require('@babel/polyfill');
+
+// import libraries to help configure the webpack config
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -14,7 +18,7 @@ module.exports = (env, argv) => {
     mode: argv.mode,
 
     // your main js file
-    entry: path.resolve(__dirname, 'src/scripts/app.js'),
+    entry: ['@babel/polyfill', path.resolve(__dirname, 'src/scripts/app.js')],
 
     // define the output
     output: {
