@@ -5,6 +5,7 @@ require('@babel/polyfill');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const StylelintPlugin = require('stylelint-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const chalk = require('chalk');
@@ -76,6 +77,13 @@ module.exports = (env, argv) => {
       new MiniCssExtractPlugin({
         filename: dev ? '[name].css' : '[name].[hash].css',
         chunkFilename: dev ? '[id].css' : '[id].[hash].css',
+      }),
+      new StylelintPlugin({
+        configFile: '.stylelintrc',
+        context: 'src',
+        files: '**/*.scss',
+        failOnError: false,
+        quiet: false,
       }),
       new CleanWebpackPlugin(),
       new ProgressBarPlugin({
