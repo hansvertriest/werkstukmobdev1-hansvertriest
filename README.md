@@ -1,10 +1,12 @@
-# 1920-mobdev1-code-template-sass
+# 1920-mobdev1-code-template-full
 
 ## Included
 
-* SASS (SCSS)
+* SASS/SCSS - A CSS Preprocessor - (https://sass-lang.com)
 * ESLint with AirBnB Style Guide (https://github.com/airbnb/javascript)
 * Stylelint with Studiohyperdrive Style Guide (https://www.npmjs.com/package/@studiohyperdrive/stylelint-config)
+* Handlebars - Minimal templating on Steroids (https://handlebarsjs.com/)
+* Navigo - A simple Javascript router with fallback for older browsers (https://github.com/krasimir/navigo)
 
 ## What you will need
 

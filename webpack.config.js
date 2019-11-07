@@ -3,6 +3,7 @@ require('@babel/polyfill');
 
 // import libraries to help configure the webpack config
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
@@ -19,7 +20,7 @@ module.exports = (env, argv) => {
     mode: argv.mode,
 
     // your main js file
-    entry: ['@babel/polyfill', path.resolve(__dirname, 'src/scripts/app.js')],
+    entry: ['@babel/polyfill', path.resolve(__dirname, 'src/app.js')],
 
     // define the output
     output: {
@@ -42,6 +43,15 @@ module.exports = (env, argv) => {
             'css-loader',
             'sass-loader',
           ],
+        },
+        {
+          test: /\.hbs$/,
+          loader: 'handlebars-loader',
+          options: {
+            knownHelpersOnly: false,
+            helperDirs: [path.join(__dirname, '/src/templates/helpers')],
+            partialDirs: [path.join(__dirname, '/src/templates/partials')],
+          },
         },
         {
           test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -71,8 +81,20 @@ module.exports = (env, argv) => {
 
     // define the plugins
     plugins: [
+      new webpack.LoaderOptionsPlugin({
+        options: {
+          handlebarsLoader: {},
+        },
+      }),
       new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, 'src/index.html'),
+        template: path.resolve(__dirname, 'src/index.hbs'),
+        minify: !dev && {
+          html5: true,
+          collapseWhitespace: true,
+          caseSensitive: true,
+          removeComments: true,
+          removeEmptyElements: true,
+        },
       }),
       new MiniCssExtractPlugin({
         filename: dev ? '[name].css' : '[name].[hash].css',

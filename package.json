@@ -1,20 +1,20 @@
 {
-  "name": "1920-mobdev1-code-template-sass",
+  "name": "1920-mobdev1-code-template-full",
   "version": "1.0.0",
   "private": true,
-  "description": "Code Template Mobile Development I",
+  "description": "Full Code Template for the course Mobile Development I",
   "scripts": {
     "dev": "webpack-dev-server --mode development --open",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production --config ./webpack.config.js "
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gdmgent-1920-mobdev1/1920-mobdev1-code-template.git"
+    "url": "git+https://github.com/gdmgent-1920-mobdev1/1920-mobdev1-code-template-full.git"
   },
   "bugs": {
-    "url": "https://github.com/gdmgent-1920-mobdev1/1920-mobdev1-code-template/issues"
+    "url": "https://github.com/gdmgent-1920-mobdev1/1920-mobdev1-code-template-full/issues"
   },
-  "homepage": "https://github.com/gdmgent-1920-mobdev1/1920-mobdev1-code-template#readme",
+  "homepage": "https://github.com/gdmgent-1920-mobdev1/1920-mobdev1-code-template-full#readme",
   "keywords": [
     "Webpack",
     "JS",
@@ -38,6 +38,7 @@
     "eslint-plugin-import": "^2.18.2",
     "fibers": "^4.0.2",
     "file-loader": "^4.2.0",
+    "handlebars-loader": "^1.7.1",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.13.0",
@@ -54,5 +55,8 @@
     "webpack-cli": "^3.3.9",
     "webpack-dev-server": "^3.8.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "handlebars": "^4.5.1",
+    "navigo": "^7.1.2"
+  }
 }
