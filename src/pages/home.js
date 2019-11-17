@@ -8,7 +8,7 @@ const homeTemplate = require('../templates/home.hbs');
 
 export default () => {
   // set the title of this page
-  const title = 'Mijn homepagina!';
+  const title = 'Ready to start...';
 
   // render the template
   Renderer.render(homeTemplate({ title }));

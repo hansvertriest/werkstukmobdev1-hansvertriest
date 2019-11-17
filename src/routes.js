@@ -3,7 +3,8 @@ import Router from './lib/core/Router';
 
 // import pages
 import HomePage from './pages/home';
-import AboutPage from './pages/about';
+import FirebasePage from './pages/firebase';
+import MapboxPage from './pages/mapbox';
 
 /**
  * Init the router
@@ -14,8 +15,9 @@ const initRoutes = () => {
 
   // add routes
   Router.addRoute('/home', HomePage);
-  Router.addRoute('/about', AboutPage);
-  // TODO add new routes here
+  Router.addRoute('/firebase', FirebasePage);
+  Router.addRoute('/mapbox', MapboxPage);
+  // TODO add new or edit existing routes here
 };
 
 /**
