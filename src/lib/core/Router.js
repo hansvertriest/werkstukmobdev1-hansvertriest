@@ -13,15 +13,15 @@ class Router {
   }
 
   addRoute(path, f, hooks = {}) {
-    if (this.router) this.router.on(path, f, hooks).resolve();
+    this.router.on(path, f, hooks).resolve();
   }
 
   navigate(l) {
-    if (this.router) this.router.navigate(l);
+    this.router.navigate(l);
   }
 
   updatePageLinks() {
-    if (this.router) this.router.updatePageLinks();
+    this.router.updatePageLinks();
   }
 }
 
