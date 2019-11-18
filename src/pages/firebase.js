@@ -15,7 +15,6 @@ export default () => {
     // check if firebase is working
     console.log(App.firebase.getAuth());
     console.log(App.firebase.getFirestore());
-    console.log(App.firebase.getStorage());
   }
 
   // render the template

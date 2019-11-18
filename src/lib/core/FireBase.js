@@ -8,7 +8,6 @@
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
-import 'firebase/storage';
 
 class FireBase {
   constructor(apiKey, projectId, messagingSenderId) {
@@ -39,10 +38,6 @@ class FireBase {
 
   getAuth() {
     return firebase.auth();
-  }
-
-  getStorage() {
-    return firebase.storage();
   }
 }
 

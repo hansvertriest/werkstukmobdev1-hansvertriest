@@ -38,6 +38,27 @@ module.exports = (env, argv) => {
           use: ['babel-loader', 'eslint-loader'],
         },
         {
+          test: /\.hbs$/,
+          use: [
+            {
+              loader: 'handlebars-loader',
+              options: {
+                helperDirs: path.join(__dirname, '/src/templates/helpers'),
+                partialDirs: path.join(__dirname, '/src/templates/partials'),
+              },
+            },
+            {
+              loader: 'extract-loader',
+            },
+            {
+              loader: 'html-loader',
+              options: {
+                interpolate: true,
+              },
+            },
+          ],
+        },
+        {
           test: /\.(sa|sc|c)ss$/,
           use: [
             dev ? 'style-loader' : MiniCssExtractPlugin.loader,
@@ -46,19 +67,10 @@ module.exports = (env, argv) => {
           ],
         },
         {
-          test: /\.hbs$/,
-          loader: 'handlebars-loader',
-          options: {
-            knownHelpersOnly: false,
-            helperDirs: [path.join(__dirname, '/src/templates/helpers')],
-            partialDirs: [path.join(__dirname, '/src/templates/partials')],
-          },
-        },
-        {
           test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
           loader: 'url-loader',
           query: {
-            limit: 10000,
+            limit: 1000,
             name: 'images/[name].[hash:7].[ext]',
           },
         },
