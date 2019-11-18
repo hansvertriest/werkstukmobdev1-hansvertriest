@@ -2,14 +2,15 @@
  * The Home Page
  */
 
-import Renderer from '../lib/core/Renderer';
+import { SITE_TITLE } from '../consts';
+import App from '../lib/App';
 
 const homeTemplate = require('../templates/home.hbs');
 
 export default () => {
   // set the title of this page
-  const title = 'Ready to start...';
+  const title = `${SITE_TITLE} is ready to go!`;
 
   // render the template
-  Renderer.render(homeTemplate({ title }));
+  App.render(homeTemplate({ title }));
 };

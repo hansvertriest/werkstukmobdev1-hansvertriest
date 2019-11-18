@@ -7,20 +7,20 @@
 import Navigo from 'navigo';
 
 class Router {
-  static init(mainUrl) {
-    this.router = new Navigo(mainUrl, true, '#!');
+  constructor(mainUrl, hash) {
+    this.router = new Navigo(mainUrl, true, hash);
   }
 
-  static addRoute(path, f, hooks = {}) {
-    this.router.on(path, f, hooks).resolve();
+  addRoute(path, f, hooks = {}) {
+    if (this.router) this.router.on(path, f, hooks).resolve();
   }
 
-  static navigate(l) {
-    this.router.navigate(l);
+  navigate(l) {
+    if (this.router) this.router.navigate(l);
   }
 
-  static updatePageLinks() {
-    this.router.updatePageLinks();
+  updatePageLinks() {
+    if (this.router) this.router.updatePageLinks();
   }
 }
 

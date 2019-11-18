@@ -4,7 +4,7 @@
 
 import { MAPBOX_API_KEY } from '../consts';
 import MapBox from '../lib/core/MapBox';
-import Renderer from '../lib/core/Renderer';
+import App from '../lib/App';
 
 const mapboxTemplate = require('../templates/mapbox.hbs');
 
@@ -13,7 +13,7 @@ export default () => {
   const title = 'Mapbox';
 
   // render the template
-  Renderer.render(mapboxTemplate({ title }));
+  App.render(mapboxTemplate({ title }));
 
   // create the MapBox options
   const mapBoxOptions = {

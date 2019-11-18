@@ -4,16 +4,15 @@
  * @author Tim De Paepe <tim.depaepe@arteveldehs.be>
  */
 
-import Router from './Router';
-
 class Renderer {
-  static init(element) {
+  constructor(element, router) {
     this.element = element;
+    this.router = router;
   }
 
-  static render(html) {
+  render(html) {
     this.element.innerHTML = html;
-    Router.updatePageLinks();
+    this.router.updatePageLinks();
   }
 }
 
