@@ -1,5 +1,6 @@
 /**
  * A FireBase Wrapper
+ * docs: https://firebase.google.com/docs
  *
  * @author Tim De Paepe <tim.depaepe@arteveldehs.be>
  */

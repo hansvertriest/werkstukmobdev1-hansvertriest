@@ -1,5 +1,6 @@
 /**
  * A MapBox wrapper
+ * docs: https://docs.mapbox.com/mapbox-gl-js/api/
  *
  * @author Tim De Paepe <tim.depaepe@arteveldehs.be>
  */

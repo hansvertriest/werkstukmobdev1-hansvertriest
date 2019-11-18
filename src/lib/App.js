@@ -5,36 +5,41 @@
  * @author Tim De Paepe <tim.depaepe@arteveldehs.be>
  */
 
+import Tools from './core/Tools';
 import Router from './core/Router';
 import Renderer from './core/Renderer';
 import FireBase from './core/FireBase';
 
 class App {
   static initCore({ mainUrl, hash, element }) {
-    this.router = new Router(mainUrl, hash);
-    this.renderer = new Renderer(element, this.router);
+    this._router = new Router(mainUrl, hash);
+    this._renderer = new Renderer(element, this.router);
   }
 
   static initFireBase({ apiKey, projectId, messagingSenderId }) {
-    this.firebase = new FireBase(apiKey, projectId, messagingSenderId);
+    this._firebase = new FireBase(apiKey, projectId, messagingSenderId);
   }
 
-  get router() {
-    return this.router;
+  static get router() {
+    return this._router;
   }
 
-  get renderer() {
-    return this.renderer;
+  static get renderer() {
+    return this._renderer;
   }
 
-  get firebase() {
-    if (!this.firebase) throw new Error('Firebase was not initialized!');
-    return this.firebase;
+  static get firebase() {
+    if (!this._firebase) throw new Error('Firebase was not initialized!');
+    return this._firebase;
+  }
+
+  static get hasFireBase() {
+    return !Tools.isUndefined(this._firebase);
   }
 
   static render(html) {
-    if (!this.renderer) throw new Error('The App Core was not initialized!');
-    this.renderer.render(html);
+    if (!this._renderer) throw new Error('The App Core was not initialized!');
+    this._renderer.render(html);
   }
 }
 

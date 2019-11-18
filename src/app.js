@@ -5,7 +5,7 @@ import App from './lib/App';
 import routes from './routes';
 
 /**
- * This funciton will initialize our app
+ * This function will initialize our app
  */
 const initApp = () => {
   // create a DOM element for our renderer

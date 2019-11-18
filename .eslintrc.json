@@ -12,6 +12,7 @@
         "linebreak-style": 0,
         "no-plusplus":"off",
         "no-console":"off",
-        "class-methods-use-this":"off"
+        "class-methods-use-this":"off",
+        "no-underscore-dangle":"off"
     }
 }

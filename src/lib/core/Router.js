@@ -1,5 +1,6 @@
 /**
  * The Router, based on Navigo Routing
+ * docs: https://github.com/krasimir/navigo
  *
  * @author Tim De Paepe <tim.depaepe@arteveldehs.be>
  */

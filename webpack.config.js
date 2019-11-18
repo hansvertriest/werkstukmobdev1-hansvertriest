@@ -8,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const StylelintPlugin = require('stylelint-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const chalk = require('chalk');
 
@@ -108,6 +109,11 @@ module.exports = (env, argv) => {
         quiet: false,
       }),
       new CleanWebpackPlugin(),
+      new ServiceWorkerWebpackPlugin({
+        entry: path.join(__dirname, 'src/sw.js'),
+        excludes: ['**/.*', '**/*.map', '*.html'],
+        filename: 'sw.js',
+      }),
       new ProgressBarPlugin({
         format: `  build [:bar] ${chalk.green.bold(':percent')} (:elapsed seconds)`,
         clear: false,
