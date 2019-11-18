@@ -7,6 +7,9 @@
 * Stylelint with Studiohyperdrive Style Guide (https://www.npmjs.com/package/@studiohyperdrive/stylelint-config)
 * Handlebars - Minimal templating on Steroids (https://handlebarsjs.com/)
 * Navigo - A simple Javascript router with fallback for older browsers (https://github.com/krasimir/navigo)
+* Firebase - The Firebase implementation (https://firebase.google.com/)
+* Mapbox - An implementation of MapBox (https://docs.mapbox.com/mapbox-gl-js/api/)
+* Service Workers - The Service Workers implementation for webpack (https://www.npmjs.com/package/serviceworker-webpack-plugin)
 
 ## What you will need
 
