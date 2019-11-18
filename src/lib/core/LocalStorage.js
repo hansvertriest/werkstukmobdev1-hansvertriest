@@ -1,5 +1,5 @@
 /**
- * A LocalStorage Helper
+ * A LocalStorage Wrapper
  *
  * @author Tim De Paepe <tim.depaepe@arteveldehs.be>
  */

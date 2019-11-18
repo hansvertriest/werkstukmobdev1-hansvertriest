@@ -1,5 +1,5 @@
 /**
- * The Router, based on Navigo Routing
+ * A FireBase Wrapper
  *
  * @author Tim De Paepe <tim.depaepe@arteveldehs.be>
  */
