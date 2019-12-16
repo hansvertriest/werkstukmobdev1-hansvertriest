@@ -10,7 +10,8 @@
 	{{/with}}
 </div>
 <div class="m-option-buttons">
-	{{> primaryButton btn_txt="join crew" btn_id="id"  }}
-	{{> primaryButton btn_txt="create crew" btn_id="id"  }}
+	{{> primaryButton btn_txt="join crew" btn_id=joinBtnId  }}
+	{{> primaryButton btn_txt="create crew" btn_id=createBtnId }}
 </div>
-{{> secondaryButton btn_txt="log out" btn_id="id"}}
+{{logOutbtnId}}
+{{> secondaryButton btn_txt="log out" btn_id=logOutBtnId}}
