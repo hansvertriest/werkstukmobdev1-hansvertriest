@@ -1,0 +1,22 @@
+<div class="o-app-container">
+</div>
+
+BUTTONS
+{{> inputfield input_title="Password" input_id="id"  }}
+{{> primaryButton btn_txt="Submit" btn_id="id"  }}
+{{> secondaryButton btn_txt="log out" btn_id="id"}}
+{{> googleButton btn_id="id"  }}
+
+TITLES:
+<h1 class="a-h1" id="btn">You can join a crew by...</h1>
+<h2 class="a-h2" id="btn">You can join a crew by...</h2>
+<h3 class="a-h3" id="btn">You can join a crew by...</h3>
+
+2nd kind of buttons:
+<button class="a-button-container__button {{modifierParasite}}">parasite mode</button>
+<button class="a-button-container__button {{modifierPlague}}">plague mode</button>
+
+TEXT
+<p class="a-text-secondary">Tap anywhere to try to regain communications!</p>
+<span class="a-important-number">{{distanceToAlien}}m</span>
+<p class="a-text"></p>

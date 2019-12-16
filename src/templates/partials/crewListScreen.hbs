@@ -1,0 +1,12 @@
+<ul class="o-screen" id="screenOverview">
+	{{#each crew}}
+	{{#with this}}
+		<div class="m-overview__avatar">
+			<div class="a-avatar__pic" style="background-image: url(../../assets/images/avatar/{{avatar}}_64.png); width: 64px; height:64px; background-size: cover;"></div>
+			<div class="a-avatar_emblem" style="background-image: url(../../assets/icons/fontawesome/{{emblem}}.svg); width: 20px; height:20px; background-size: cover;"></div>
+		</div>
+		<p class="a-text"> {{ screenName }} </p>
+		<div class="m-overview__divider"></div>
+	{{/with}}
+	{{/each}}
+</ul>

@@ -5,9 +5,9 @@
  */
 
 class Tools {
-  static isUndefined(obj) {
-    return typeof (obj) === 'undefined';
-  }
+	static isUndefined(obj) {
+		return typeof (obj) === 'undefined';
+	}
 }
 
 export default Tools;

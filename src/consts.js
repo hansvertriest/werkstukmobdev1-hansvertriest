@@ -7,13 +7,13 @@ export const SITE_TITLE = 'My Application';
 
 // router
 export const ROUTER_HASH = '#!';
-export const ROUTER_DEFAULT_PAGE = 'home';
+export const ROUTER_DEFAULT_PAGE = 'login';
 
 // mapbox
 export const MAPBOX_API_KEY = '';
 
 // firebase
-export const INIT_FIREBASE = false;
-export const FIREBASE_API_KEY = '';
-export const FIREBASE_PROJECT_ID = '';
-export const FIREBASE_MESSAGING_SENDER_ID = '';
+export const INIT_FIREBASE = true;
+export const FIREBASE_API_KEY = ' AIzaSyCrFisYaIJPUSySlUv-VTHFiCYdZPkUIcM ';
+export const FIREBASE_PROJECT_ID = 'spacetag-8088f';
+export const FIREBASE_MESSAGING_SENDER_ID = '1024778023867';

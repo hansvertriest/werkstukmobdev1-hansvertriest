@@ -1,16 +1,13 @@
-/**
- * The Home Page
- */
-
-import { SITE_TITLE } from '../consts';
 import App from '../lib/App';
 
 const homeTemplate = require('../templates/home.hbs');
 
 export default () => {
-  // set the title of this page
-  const title = `${SITE_TITLE} is ready to go!`;
+	const data = {
+		screenName: 'AlienDestroyer3000',
+		avatar: 'astro1',
+	};
 
-  // render the template
-  App.render(homeTemplate({ title }));
+	// render the template
+	App.render(homeTemplate({ data }));
 };

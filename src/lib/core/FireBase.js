@@ -10,35 +10,35 @@ import 'firebase/firestore';
 import 'firebase/auth';
 
 class FireBase {
-  constructor(apiKey, projectId, messagingSenderId) {
-    this.apiKey = apiKey;
-    this.projectId = projectId;
-    this.messagingSenderId = messagingSenderId;
-    this.initializeApp();
-  }
+	constructor(apiKey, projectId, messagingSenderId) {
+		this.apiKey = apiKey;
+		this.projectId = projectId;
+		this.messagingSenderId = messagingSenderId;
+		this.initializeApp();
+	}
 
-  initializeApp() {
-    firebase.initializeApp(this.getFireBaseConfig());
-  }
+	initializeApp() {
+		firebase.initializeApp(this.getFireBaseConfig());
+	}
 
-  getFireBaseConfig() {
-    return {
-      apiKey: `${this.apiKey}`,
-      authDomain: `${this.projectId}.firebaseapp.com`,
-      databaseURL: `https://${this.projectId}.firebaseio.com`,
-      projectId: `${this.projectId}`,
-      storageBucket: `${this.projectId}.appspot.com`,
-      messagingSenderId: `${this.messagingSenderId}`,
-    };
-  }
+	getFireBaseConfig() {
+		return {
+			apiKey: `${this.apiKey}`,
+			authDomain: `${this.projectId}.firebaseapp.com`,
+			databaseURL: `https://${this.projectId}.firebaseio.com`,
+			projectId: `${this.projectId}`,
+			storageBucket: `${this.projectId}.appspot.com`,
+			messagingSenderId: `${this.messagingSenderId}`,
+		};
+	}
 
-  getFirestore() {
-    return firebase.firestore();
-  }
+	getFirestore() {
+		return firebase.firestore();
+	}
 
-  getAuth() {
-    return firebase.auth();
-  }
+	getAuth() {
+		return firebase.auth();
+	}
 }
 
 export default FireBase;

@@ -1,0 +1,7 @@
+templates / newpage.hbs;
+
+pages / newpage.js;
+
+routes.js;
+
+addroute;

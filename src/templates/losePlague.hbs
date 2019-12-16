@@ -1,0 +1,17 @@
+{{#with data}}
+<p class="a-text-secondary">TIME'S UP</p>
+<h1 class="a-h1" id="btn">You lost</h1>
+<h2 class="a-h2" id="btn">You infected</h2>
+<p class="a-text-secondary"><span class="a-important-number">{{astronautsInfected}}</span>astronauts</p>
+<div class="o-survivors">
+	<p class="a-surivors_text-secondary">Survivors</p>
+	{{#if survivorsEmpty}}
+		<p class="a-text-secondary">No survivors</p>
+	{{/if}}
+	{{#if survivorsExist}}
+		{{> crewListScreen crew=survivors}}
+	{{/if}}
+</div>
+
+{{/with}}
+{{> secondaryButton btn_txt="back to game" btn_id=toGameBtnId }}

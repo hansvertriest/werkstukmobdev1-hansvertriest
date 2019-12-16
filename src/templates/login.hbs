@@ -1,0 +1,15 @@
+<div class="o-app-container">
+	<h1 class="a-h1">login</h1>
+	<div class="o-login-form">
+		{{> inputfield input_title="Email" input_id=emailFieldId }}
+		{{> inputfield input_title="Password" input_id=passwordFieldId  }}
+		{{> primaryButton btn_txt="Submit" btn_id=submitBtnId  }}
+		{{> googleButton btn_id=googleBtnId }}
+		<div class="m-login-form__account-links">
+			<a href="./#!/register" class="a-account-links__no-account">I don't have an account yet</a>
+			<a href="./#!/newPassword" class="a-account-links__no-account">Forgot password?</a>
+		</div>
+	</div>
+	
+</div>
+
