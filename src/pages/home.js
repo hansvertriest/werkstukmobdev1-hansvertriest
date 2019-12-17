@@ -1,15 +1,14 @@
 import App from '../lib/App';
 import EventController from '../lib/EventController';
 import Page from '../lib/Page';
+import PageDataCollector from '../lib/PageDataCollector';
 
 const homeTemplate = require('../templates/home.hbs');
 
-export default () => {
+const pageScript = () => {
 	/* Page data */
-	const data = {
-		screenName: 'AlienDestroyer3000',
-		avatar: 'astro1',
-	};
+	const data = PageDataCollector.dataHome();
+	console.log(data);
 	/* DOM variables */
 	const joinBtnId = 'joinBtn';
 	const createBtnId = 'createBtn';
@@ -22,7 +21,6 @@ export default () => {
 		logOutBtnId,
 	}));
 	App.router.navigate('/home');
-	Page.checkAcces('/home');
 
 
 	/* Event listeners */
@@ -38,4 +36,23 @@ export default () => {
 	EventController.addClickListener(joinBtnId, () => {
 		App.router.navigate('/join');
 	});
+};
+
+export default () => {
+	/*
+	clear all intervals
+	*/
+	Page.pageIntervals.forEach((interval) => clearInterval(interval));
+
+	/*
+	do checkups and start pageScript
+	*/
+	Page.checkLoggedIn()
+		.then(() => {
+			if (Page.checkAcces('/home')) {
+				pageScript();
+			} else {
+				App.router.navigate('/login');
+			}
+		});
 };

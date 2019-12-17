@@ -4,7 +4,7 @@ import Page from '../lib/Page';
 
 const registerTemplate = require('../templates/register.hbs');
 
-export default () => {
+const pageScript = () => {
 	/* DOM variables	*/
 	const nameFieldId = 'nameField';
 	const emailFieldId = 'emailField';
@@ -22,7 +22,6 @@ export default () => {
 		errorContainerId,
 	}));
 	App.router.navigate('/register');
-	Page.checkAcces('/register');
 
 	/* Event listeners */
 
@@ -51,4 +50,23 @@ export default () => {
 				console.log(error.message);
 			});
 	});
+};
+
+export default () => {
+	/*
+	clear all intervals
+	*/
+	Page.pageIntervals.forEach((interval) => clearInterval(interval));
+
+	/*
+	do checkups and start pageScript
+	*/
+	Page.checkLoggedIn()
+		.then(() => {
+			if (Page.checkAcces('/register')) {
+				pageScript();
+			} else {
+				App.router.navigate('/home');
+			}
+		});
 };

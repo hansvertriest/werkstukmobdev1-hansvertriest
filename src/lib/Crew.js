@@ -1,4 +1,5 @@
 import CrewMember from './CrewMember';
+import Game from './Game';
 
 class Crew {
 	constructor() {
@@ -6,7 +7,6 @@ class Crew {
 		this.inGame = false;
 		this.moderator = undefined; // string
 		this.crewMembers = [];
-
 		this.moderatorEmblem = 'shield-alt-solid';
 	}
 
@@ -49,6 +49,13 @@ class Crew {
 		this.inGame = false;
 		this.moderator = undefined; // string
 		this.crewMembers = [];
+	}
+
+	// crew actions
+	startGame() {
+		if (Game.isSet) {
+			this.inGame = true;
+		}
 	}
 }
 

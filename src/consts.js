@@ -7,7 +7,7 @@ export const SITE_TITLE = 'My Application';
 
 // router
 export const ROUTER_HASH = '#!';
-export const ROUTER_DEFAULT_PAGE = 'login';
+export const ROUTER_DEFAULT_PAGE = '/home';
 
 // mapbox
 export const MAPBOX_API_KEY = '';

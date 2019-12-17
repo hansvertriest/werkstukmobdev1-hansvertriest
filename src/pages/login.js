@@ -4,7 +4,7 @@ import Page from '../lib/Page';
 
 const loginTemplate = require('../templates/login.hbs');
 
-export default () => {
+const pageScript = () => {
 	/* DOM variables	*/
 	const emailFieldId = 'emailField';
 	const passwordFieldId = 'passwordField';
@@ -20,9 +20,9 @@ export default () => {
 		errorContainerId,
 	}));
 	App.router.navigate('/login');
-	Page.checkAcces('/login');
 
 	/* Event listeners */
+	// login
 	EventController.addClickListener(submitBtnId, () => {
 		const email = document.getElementById(emailFieldId).value;
 		const password = document.getElementById(passwordFieldId).value;
@@ -35,25 +35,33 @@ export default () => {
 				document.getElementById(errorContainerId).innerText = error.message;
 			});
 	});
+
+	// google btn
 	EventController.addClickListener(googleBtnId, () => {
 		App._firebase.getAuth().signInWithPopup(App._firebase.getProvider())
 			.then(() => {
-				// This gives you a Google Access Token. You can use it to access the Google API.
-				// var token = result.credential.accessToken;
-				// The signed-in user info.
-				// var user = result.user;
-				// ...
 				App.router.navigate('/home');
 			}).catch((error) => {
-				// Handle Errors here.
-				// var errorCode = error.code;
-				// var errorMessage = error.message;
-				// The email of the user's account used.
-				// var email = error.email;
-				// The firebase.auth.AuthCredential type that was used.
-				// var credential = error.credential;
-				// ...
 				console.log(error.message);
 			});
 	});
+};
+
+export default () => {
+	/*
+	clear all intervals
+	*/
+	Page.pageIntervals.forEach((interval) => clearInterval(interval));
+
+	/*
+	do checkups and start pageScript
+	*/
+	Page.checkLoggedIn()
+		.then(() => {
+			if (Page.checkAcces('/login')) {
+				pageScript();
+			} else {
+				App.router.navigate('/home');
+			}
+		});
 };

@@ -1,4 +1,4 @@
-// import Player from './Player';
+import Player from './Player';
 import Crew from './Crew';
 // import Game from './Game';
 
@@ -17,6 +17,13 @@ class PageDataCollector {
 		});
 		const data = { crew: crewArray };
 		return data;
+	}
+
+	dataHome() {
+		return {
+			screenName: Player.screenName,
+			avatar: Player.avatar,
+		};
 	}
 }
 

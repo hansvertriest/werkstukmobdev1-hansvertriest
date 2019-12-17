@@ -1,4 +1,6 @@
 import Crew from './Crew';
+import Game from './Game';
+import Player from './Player';
 
 class DataSeeder {
 	constructor() {
@@ -13,7 +15,16 @@ class DataSeeder {
 		These portray the onsnapshot listeners that would indicate something has changed.
 	*/
 
+	seedPlayer() {
+		const userId = '0000';
+		const screenName = 'CoolBoy';
+		const avatar = 'astro1';
+		Player.setParams(userId, screenName, avatar);
+	}
+
 	seedCrew(amountOfMembers) {
+		const waitTime = 3;
+
 		// add members who already are in the crew before join
 		for (let i = 0; i < amountOfMembers; i++) {
 			this.addCrewMember();
@@ -31,21 +42,41 @@ class DataSeeder {
 				this.addCrewMember();
 				console.log('DATASEEDER: waiting 3 sec');
 			}
-		}, 10000);
+		}, waitTime * 1000);
 
 		setTimeout(() => {
 			if (Crew.crewCode !== undefined) {
 				this.removeCrewMember(Crew.crewMembers[0].userId);
 				console.log('DATASEEDER: waiting 2 sec');
 			}
-		}, 13000);
+		}, (waitTime * 1000) + 2000);
 
 		setTimeout(() => {
 			if (Crew.crewCode !== undefined) {
 				this.removeCrewMember(Crew.crewMembers[1].userId);
 				console.log('DATASEEDER: waiting 20 sec');
 			}
-		}, 15000);
+		}, (waitTime * 1000) + 3000);
+
+		// start game
+		setTimeout(() => {
+			if (Crew.crewCode !== undefined) {
+				// set game settings
+				const gameMode = 'parasite';
+				const duration = 300;
+				const location = ['51.0873544', '3.6686911,15'];
+				const radius = 100;
+				const taggers = [Crew.crewMembers[0].userId];
+				this.setGameSettings(gameMode, duration, location, radius, taggers);
+				// start the game
+				this.startGame();
+				console.log('DATASEEDER: started game');
+			}
+		}, (waitTime * 1000) + 4000);
+	}
+
+	seedGame() {
+		console.log('DATASEEDER: seeding game');
 	}
 
 	/*
@@ -88,6 +119,14 @@ class DataSeeder {
 		const randomMember = Crew.crewMembers[Math.floor(Math.random() * Crew.crewMembers.length)];
 		// assign moderator
 		Crew.setModerator(randomMember.userId);
+	}
+
+	setGameSettings() {
+		Game.setSettings('parasite', 300, ['51.0873544', '3.6686911,15'], 100, [Crew.crewMembers[0].userId]);
+	}
+
+	startGame() {
+		Crew.startGame();
 	}
 }
 

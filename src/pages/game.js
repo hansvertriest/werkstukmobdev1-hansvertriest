@@ -1,8 +1,11 @@
 import App from '../lib/App';
+import Page from '../lib/Page';
+import DataSeeder from '../lib/DataSeeder';
 
 const gameTemplate = require('../templates/game.hbs');
 
-export default () => {
+const pageScript = () => {
+	/* Page data */
 	const data = {
 		avatar: 'astro1',
 		isModerator: true,
@@ -20,6 +23,8 @@ export default () => {
 			{ lat: '465464564', lon: '54446464' },
 		],
 	};
+
+	/* Dom variables */
 	const buttonMsgId = 'buttonMsg';
 	const buttonCrewId = 'buttonCrew';
 	const buttonSettingsId = 'buttonSettings';
@@ -32,4 +37,26 @@ export default () => {
 		buttonSettingsId,
 	}));
 	App.router.navigate('/game');
+};
+
+export default () => {
+	/*
+	clear all intervals
+	*/
+	Page.pageIntervals.forEach((interval) => clearInterval(interval));
+
+	/*
+	do checkups and start pageScript
+	*/
+	Page.checkLoggedIn()
+		.then(() => {
+			DataSeeder.seedGame();
+		})
+		.then(() => {
+			if (Page.checkAcces('/game')) {
+				pageScript();
+			} else {
+				App.router.navigate('/home');
+			}
+		});
 };

@@ -1,34 +1,48 @@
 import App from './App';
-import Crew from './Crew';
+import Player from './Player';
+import DataSeeder from './DataSeeder';
 
 class Page {
 	constructor() {
 		this.currentPage = undefined;
+		this.loggedIn = false;
+		this.intervals = [];
+	}
+
+	checkLoggedIn() {
+		return new Promise((resolve) => {
+			App._firebase.getAuth().onAuthStateChanged((user) => {
+				if (user) {
+					this.loggedIn = true;
+					console.log(`Logged in user: ${App._firebase.getAuth().currentUser.email}`);
+					// add DBlistener for playerParams
+					DataSeeder.seedPlayer();
+					resolve();
+				} else {
+					this.loggedIn = false;
+					console.log('Logged in user: NONE');
+					// reset player
+					Player.resetParams();
+					resolve();
+				}
+			});
+		});
 	}
 
 	/* Checks if user should be on/has access to current page and reroutes */
-	async checkAcces(page) {
+	checkAcces(page) {
 		this.currentPage = page;
-		const user = App._firebase.getAuth().currentUser;
-		if (user) {
-			console.log(`Logged in user: ${App._firebase.getAuth().currentUser.email}`);
-			if (page === '/login' || page === '/register') {
-				App.router.navigate('/home');
+		if (this.loggedIn === false) {
+			if (page === '/register' || page === '/registerAvatar' || page === '/login') {
+				return true;
 			}
 		} else {
-			console.log(user);
-			console.log('Logged in user: NONE');
-			if (page !== '/login' && page !== '/register' && page !== '/registerAvatar') {
-				App.router.navigate('/login');
+			if (page === '/register' || page === '/registerAvatar' || page === '/login') {
+				return false;
 			}
+			return true;
 		}
-
-		// check if player is in a crew
-		if (page === '/crewOverview') {
-			if (Crew.crewCode === undefined) {
-				App.router.navigate('/home');
-			}
-		}
+		return false;
 	}
 }
 
