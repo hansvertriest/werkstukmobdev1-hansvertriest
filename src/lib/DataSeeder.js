@@ -33,7 +33,7 @@ class DataSeeder {
 
 		// assign a moderator
 		if (Crew.crewCode !== undefined) {
-			this.assignRandomModerator();
+			this.assignModerator('0000');
 		}
 
 		// simulate leaves/joins
@@ -46,18 +46,17 @@ class DataSeeder {
 
 		setTimeout(() => {
 			if (Crew.crewCode !== undefined) {
-				this.removeCrewMember(Crew.crewMembers[0].userId);
+				this.removeCrewMember(Crew.crewMembers[1].userId);
 				console.log('DATASEEDER: waiting 2 sec');
 			}
 		}, (waitTime * 1000) + 2000);
 
 		setTimeout(() => {
 			if (Crew.crewCode !== undefined) {
-				this.removeCrewMember(Crew.crewMembers[1].userId);
+				this.removeCrewMember(Crew.crewMembers[2].userId);
 				console.log('DATASEEDER: waiting 20 sec');
 			}
 		}, (waitTime * 1000) + 3000);
-
 		// start game
 		setTimeout(() => {
 			if (Crew.crewCode !== undefined) {
@@ -69,10 +68,28 @@ class DataSeeder {
 				const taggers = [Crew.crewMembers[0].userId];
 				this.setGameSettings(gameMode, duration, location, radius, taggers);
 				// start the game
-				this.startGame();
+				this.initGame();
 				console.log('DATASEEDER: started game');
 			}
 		}, (waitTime * 1000) + 4000);
+	}
+
+	seedLocations() {
+		setInterval(() => {
+			// update player location
+			this.updatePlayerLocation({ lat: 3.7239323, lon: 51.0570054 });
+			// update crew location
+			const locationObject = [];
+			Crew.crewMembers.forEach((member) => {
+				const locationMember = {
+					userId: member.userId,
+					lon: 3.7218819,
+					lat: 51.0535952,
+				};
+				locationObject.push(locationMember);
+			});
+			this.updateLocationCrewMembers(locationObject);
+		}, 3000);
 	}
 
 	seedGame() {
@@ -88,6 +105,20 @@ class DataSeeder {
 
 	joinCrew(crewCode) {
 		Crew.setCrewCode(crewCode);
+		Crew.addMember(Player.userId, Player.screenName, Player.avatar);
+	}
+
+	// this would be a listener for the crewLocations
+	// if a change in location of the player would happen => Player is also updated
+	updatePlayerLocation(locationObject) {
+		Crew.getMemberById('0000').location = locationObject;
+		Player.location = locationObject;
+	}
+
+	updateLocationCrewMembers(locationObject) {
+		locationObject.forEach((location) => {
+			Crew.getMemberById(location.userId).setLocation(location.lon, location.lat);
+		});
 	}
 
 	/*
@@ -121,12 +152,28 @@ class DataSeeder {
 		Crew.setModerator(randomMember.userId);
 	}
 
+	assignModerator(userId) {
+		Crew.getMemberById(userId).setModerator();
+	}
+
 	setGameSettings() {
 		Game.setSettings('parasite', 300, ['51.0873544', '3.6686911,15'], 100, [Crew.crewMembers[0].userId]);
 	}
 
-	startGame() {
+	initGame() {
+		this.assignTagger('0000');
 		Crew.startGame();
+	}
+
+	assignTagger(userId) {
+		Crew.getMemberById(userId).setModerator();
+	}
+
+	assignRandomTagger() {
+		// get random member
+		const randomMember = Crew.crewMembers[Math.floor(Math.random() * Crew.crewMembers.length)];
+		// assign moderator
+		Crew.setTagger(randomMember.userId);
 	}
 }
 

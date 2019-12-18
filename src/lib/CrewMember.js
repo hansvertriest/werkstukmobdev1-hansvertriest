@@ -6,9 +6,18 @@ export default class CrewMember {
 		this.emblem = emblem;
 		this.location = undefined;
 		this.isModerator = false;
+		this.location = undefined;
 	}
 
 	assignEmblem(emblemString) {
 		this.emblem = emblemString;
+	}
+
+	setLocation(lon, lat) {
+		this.location = { lon, lat };
+	}
+
+	setModerator() {
+		this.isModerator = true;
 	}
 }

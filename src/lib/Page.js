@@ -6,7 +6,11 @@ class Page {
 	constructor() {
 		this.currentPage = undefined;
 		this.loggedIn = false;
-		this.intervals = [];
+		this.pageIntervals = [];
+	}
+
+	setCurrentPage(page) {
+		this.currentPage = page;
 	}
 
 	checkLoggedIn() {

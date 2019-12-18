@@ -3,7 +3,7 @@ class Player {
 		this.userId = undefined;
 		this.screenName = '';
 		this.avatar = '';
-		this.location = [];
+		this.location = {};
 	}
 
 	setParams(userId, screenName, avatar) {
@@ -16,7 +16,7 @@ class Player {
 		this.userId = undefined;
 		this.screenName = '';
 		this.avatar = '';
-		this.location = [];
+		this.location = {};
 	}
 }
 

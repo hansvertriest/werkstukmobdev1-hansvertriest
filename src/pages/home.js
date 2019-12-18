@@ -24,6 +24,8 @@ const pageScript = () => {
 
 
 	/* Event listeners */
+
+	// logout
 	EventController.addClickListener(logOutBtnId, () => {
 		App._firebase.getAuth().signOut().then(() => {
 			App.router.navigate('/login');

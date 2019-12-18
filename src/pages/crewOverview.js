@@ -29,9 +29,13 @@ const pageScript = () => {
 		if (Crew.inGame) {
 			App.router.navigate('/game');
 		}
+		// terminate interval when other page is visible
+		if (Page.currentPage !== '/crewOverview') {
+			clearInterval(screenRefresh);
+		}
 	}, 1000);
 
-	Page.intervals.push(screenRefresh);
+	Page.pageIntervals.push(screenRefresh);
 	App.router.navigate('/crewOverview');
 };
 
@@ -48,6 +52,8 @@ export default () => {
 		.then(() => {
 			// Set dataListeners
 			DataSeeder.seedCrew(3);
+			// Set location listener
+			DataSeeder.seedLocations();
 		})
 		.then(() => {
 			if (Page.checkAcces('/crewOverview')) {

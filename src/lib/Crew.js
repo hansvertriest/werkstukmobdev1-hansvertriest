@@ -51,6 +51,13 @@ class Crew {
 		this.crewMembers = [];
 	}
 
+	// updatePlayerInCrew() {
+	// 	const playerCrewMember = this.crewMembers.filter((member) => {
+	// 		return member.userId === Player.userId;
+	// 	})[0];
+	// 	playerCrewMember.
+	// }
+
 	// crew actions
 	startGame() {
 		if (Game.isSet) {
