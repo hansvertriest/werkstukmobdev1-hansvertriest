@@ -5,10 +5,7 @@ import PageDataCollector from '../lib/PageDataCollector';
 
 const homeTemplate = require('../templates/home.hbs');
 
-const pageScript = () => {
-	/* Page data */
-	const data = PageDataCollector.dataHome();
-	console.log(data);
+const pageScript = (data) => {
 	/* DOM variables */
 	const joinBtnId = 'joinBtn';
 	const createBtnId = 'createBtn';
@@ -20,8 +17,6 @@ const pageScript = () => {
 		createBtnId,
 		logOutBtnId,
 	}));
-	App.router.navigate('/home');
-
 
 	/* Event listeners */
 
@@ -42,17 +37,18 @@ const pageScript = () => {
 
 export default () => {
 	/*
-	clear all intervals
-	*/
-	Page.pageIntervals.forEach((interval) => clearInterval(interval));
-
-	/*
 	do checkups and start pageScript
 	*/
-	Page.checkLoggedIn()
-		.then(() => {
-			if (Page.checkAcces('/home')) {
-				pageScript();
+	Page.checkAcces('/home')
+		.then((resp) => {
+			if (resp) {
+				// get data
+				PageDataCollector.dataHome()
+					.then((data) => {
+						// run script
+						pageScript(data);
+						App.router.navigate('/home');
+					});
 			} else {
 				App.router.navigate('/login');
 			}

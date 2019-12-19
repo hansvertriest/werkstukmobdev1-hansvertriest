@@ -56,9 +56,9 @@ export default () => {
 	/*
 	do checkups and start pageScript
 	*/
-	Page.checkLoggedIn()
-		.then(() => {
-			if (Page.checkAcces('/login')) {
+	Page.checkAcces('/login')
+		.then((resp) => {
+			if (resp) {
 				pageScript();
 			} else {
 				App.router.navigate('/home');

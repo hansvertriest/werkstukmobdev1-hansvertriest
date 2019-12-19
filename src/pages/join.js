@@ -1,17 +1,19 @@
 import App from '../lib/App';
 import EventController from '../lib/EventController';
 import Page from '../lib/Page';
-import DataSeeder from '../lib/DataSeeder';
+import Player from '../lib/Player';
+import PageDataCollector from '../lib/PageDataCollector';
+import DataUploader from '../lib/DataUploader';
 
 const joinTemplate = require('../templates/join.hbs');
 
-const pageScript = () => {
+const pageScript = (data) => {
 	/* DOM variables */
 	const joinBtnId = 'joinBtn';
 	const codeFieldId = 'codeField';
+	const backBtnId = 'backBtn';
 
-	Page.checkAcces('/join');
-	App.render(joinTemplate({ joinBtnId, codeFieldId }));
+	App.render(joinTemplate({ joinBtnId, codeFieldId, backBtnId }));
 	App.router.navigate('/join');
 
 	/* Event listeners */
@@ -19,12 +21,15 @@ const pageScript = () => {
 	// Join crew
 	EventController.addClickListener(joinBtnId, () => {
 		const crewCode = document.getElementById(codeFieldId).value;
-		console.log(crewCode);
-		// check if code is in seeder's code | when implementing DB -> else if code is in DB
-		if (DataSeeder.crewCodes.includes(crewCode) && App._firebase.getAuth().currentUser.email === 'test@test.com') {
-			DataSeeder.joinCrew(crewCode);
+		// check if crew exists
+		if (data.crewCodes.includes(crewCode) && App._firebase.getAuth().currentUser.email === 'test@test.com') {
+			DataUploader.joinCrew(crewCode);
 		}
-		App.router.navigate('/crewOverview');
+	});
+
+	// Go back
+	EventController.addClickListener(backBtnId, () => {
+		App.router.navigate(Page.lastPage);
 	});
 };
 
@@ -37,10 +42,40 @@ export default () => {
 	/*
 	do checkups and start pageScript
 	*/
-	Page.checkLoggedIn()
-		.then(() => {
-			if (Page.checkAcces('/join')) {
-				pageScript();
+	Page.checkAcces('/join')
+		.then((resp) => {
+			if (resp) {
+				/* Data listener */
+
+				// listen if user has joined
+				const joinedListener = App.firebase.db.collection('users').doc(Player.userId)
+					.onSnapshot((doc) => {
+						const dataDoc = doc.data();
+						if (dataDoc.crewCode.length === 4) {
+							Player.joinCrew(dataDoc.crewCode);
+							joinedListener();
+
+							// listen if user has left
+							const leftListener = App.firebase.db.collection('users').doc(Player.userId)
+								.onSnapshot((doc2) => {
+									const dataDoc2 = doc2.data();
+									if (dataDoc2.crewCode.length !== 4) {
+										Player.leaveCrew(dataDoc2.crewCode);
+										leftListener();
+										App.router.navigate('/home');
+									}
+								});
+							App.router.navigate('/crewOverview');
+						}
+						Player.crewCode = dataDoc.crewCode;
+					});
+
+				PageDataCollector.dataJoin()
+					.then((data) => {
+						pageScript(data);
+					});
+			} else if (typeof resp === 'string') {
+				App.router.navigate(resp);
 			} else {
 				App.router.navigate('/login');
 			}

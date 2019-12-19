@@ -1,3 +1,5 @@
+import Crew from './Crew';
+
 class Player {
 	constructor() {
 		this.userId = undefined;
@@ -17,6 +19,16 @@ class Player {
 		this.screenName = '';
 		this.avatar = '';
 		this.location = {};
+	}
+
+	leaveCrew() {
+		Crew.crewCode = undefined;
+		Crew.resetCrew();
+	}
+
+	joinCrew(crewCode) {
+		Crew.crewCode = crewCode;
+		// import all crew members
 	}
 }
 

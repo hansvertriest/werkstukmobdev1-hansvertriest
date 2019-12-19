@@ -27,12 +27,19 @@ const pageScript = () => {
 
 	// Submitting registration
 	EventController.addClickListener(submitBtnId, () => {
-		// const screenName = document.getElementById(nameFieldId);
+		const screenName = document.getElementById(nameFieldId).value;
 		const email = document.getElementById(emailFieldId).value;
 		const password = document.getElementById(passwordFieldId).value;
 		App._firebase.getAuth().createUserWithEmailAndPassword(email, password)
 			.then(() => {
 				console.log('all went well!');
+				const userUID = App.firebase.getAuth().currentUser.uid;
+				App.firebase.db.collection('users').doc(userUID).set({
+					screenName,
+				})
+					.catch((e) => {
+						console.log(e);
+					});
 				App.router.navigate('/registerAvatar');
 			})
 			.catch((error) => {
@@ -61,9 +68,9 @@ export default () => {
 	/*
 	do checkups and start pageScript
 	*/
-	Page.checkLoggedIn()
-		.then(() => {
-			if (Page.checkAcces('/register')) {
+	Page.checkAcces('/register')
+		.then((resp) => {
+			if (resp) {
 				pageScript();
 			} else {
 				App.router.navigate('/home');

@@ -1,3 +1,4 @@
+import App from './App';
 import Player from './Player';
 import Crew from './Crew';
 import Game from './Game';
@@ -7,23 +8,43 @@ import Game from './Game';
 */
 class PageDataCollector {
 	dataCrewOverview() {
-		const crewArray = [];
-		Crew.crewMembers.forEach((member) => {
-			crewArray.push({
-				userId: member.userId,
-				screenName: member.screenName,
-				avatar: member.avatar,
+		return new Promise((resolve) => {
+			const crewArray = [];
+			Crew.crewMembers.forEach((member) => {
+				crewArray.push({
+					userId: member.userId,
+					screenName: member.screenName,
+					avatar: member.avatar,
+				});
 			});
+			const data = { crew: crewArray };
+			resolve(data);
 		});
-		const data = { crew: crewArray };
-		return data;
 	}
 
 	dataHome() {
-		return {
-			screenName: Player.screenName,
-			avatar: Player.avatar,
-		};
+		return new Promise((resolve) => {
+			App.firebase.db.collection('users').doc(Player.userId).get()
+				.then((doc) => {
+					resolve(doc.data());
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		});
+	}
+
+	dataJoin() {
+		return new Promise((resolve) => {
+			App.firebase.db.collection('crews').get()
+				.then((doc) => {
+					const crewCodes = doc.docs.map((document) => document.id);
+					resolve({ crewCodes });
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		});
 	}
 
 	dataGame() {

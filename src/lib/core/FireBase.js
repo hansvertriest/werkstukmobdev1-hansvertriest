@@ -15,6 +15,7 @@ class FireBase {
 		this.projectId = projectId;
 		this.messagingSenderId = messagingSenderId;
 		this.initializeApp();
+		this.db = this.getFirestore();
 	}
 
 	initializeApp() {
