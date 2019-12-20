@@ -53,9 +53,9 @@ const pageScript = () => {
 };
 
 export default () => {
-	Page.checkAcces('/login')
+	Page.checkAcces('/registerAvatar')
 		.then((resp) => {
-			if (resp) {
+			if (resp === true) {
 				pageScript();
 			} else {
 				App.router.navigate('/home');

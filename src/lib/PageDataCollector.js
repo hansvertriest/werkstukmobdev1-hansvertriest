@@ -7,18 +7,28 @@ import Game from './Game';
 	Contains a method per page that returns the necessary data for that particular page
 */
 class PageDataCollector {
-	dataCrewOverview() {
+	dataCrewOverview(crewMemberId) {
 		return new Promise((resolve) => {
 			const crewArray = [];
-			Crew.crewMembers.forEach((member) => {
-				crewArray.push({
-					userId: member.userId,
-					screenName: member.screenName,
-					avatar: member.avatar,
-				});
-			});
 			const data = { crew: crewArray };
-			resolve(data);
+			crewMemberId.forEach((memberId) => {
+				App.firebase.db.collection('users').doc(memberId).get()
+					.then((doc) => {
+						const member = doc.data();
+						const memberObject = {
+							userId: memberId,
+							screenName: member.screenName,
+							avatar: member.avatar,
+						};
+						crewArray.push(memberObject);
+					})
+					.then(() => {
+						// if everything is in crewArray => resolve
+						if (crewArray.length === crewMemberId.length) {
+							resolve(data);
+						}
+					});
+			});
 		});
 	}
 

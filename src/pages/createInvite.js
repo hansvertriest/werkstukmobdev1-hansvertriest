@@ -1,26 +1,14 @@
 import App from '../lib/App';
+import EventController from '../lib/EventController';
+import DataUploader from '../lib/DataUploader';
+import Page from '../lib/Page';
+import Player from '../lib/Player';
+import Crew from '../lib/Crew';
+
 
 const createInviteTemplate = require('../templates/createInvite.hbs');
 
-export default () => {
-	// input data
-	const data = {
-		crew: [
-			{ screenName: 'josé', avatar: 'astro1', emblem: 'shield' },
-			{ screenName: 'josanne', avatar: 'astro1', emblem: 'shield' },
-			{ screenName: 'peterken', avatar: 'astro1', emblem: 'shield' },
-		],
-		settings: {
-			duration: '15',
-			radius: '500',
-			modifierParasite: 'a-button-container__button--active',
-			modifierPlague: '',
-			description: 'The alien monster carries a dangerous parasite with him! When he catches a crew member the parasite will jump to him/her. Now he/she is the alien monster and will try to catch the others!',
-			isInGame: true,
-		},
-		code: '0471',
-	};
-
+const pageScript = (data) => {
 	const playBtnId = 'id';
 	const playBtnIcon = 'play-solid'; // or pause-solid
 	const navIdInvite = 'invite';
@@ -37,13 +25,40 @@ export default () => {
 	}));
 	App.router.navigate('/createInvite');
 
-	document.getElementById(navIdInvite).addEventListener('click', () => {
+	EventController.addClickListener(navIdInvite, () => {
 		App.router.navigate('/createInvite');
 	});
-	document.getElementById(navIdOverview).addEventListener('click', () => {
+	EventController.addClickListener(navIdOverview, () => {
 		App.router.navigate('/createOverview');
 	});
-	document.getElementById(navIdSettings).addEventListener('click', () => {
+	EventController.addClickListener(navIdSettings, () => {
 		App.router.navigate('/createSettings');
 	});
+};
+
+export default () => {
+	Page.checkAcces('/createInvite')
+		.then((resp) => {
+			if (resp === true) {
+				// if not already have crew => create one
+				if (Crew.crewCode.length !== 4 || !Crew.playerIsModerator()) {
+					DataUploader.createCrew();
+				}
+
+				// Listen if crew has been created
+				const isCreated = App.firebase.db.collection('users').doc(Player.userId)
+					.onSnapshot((doc) => {
+						const playerInfo = doc.data();
+						if (playerInfo.crewCode === Crew.crewCode) {
+							pageScript({ crewCode: Crew.crewCode });
+							isCreated();
+						}
+					});
+				App.router.navigate('/createInvite');
+			} else if (typeof resp === 'string') {
+				App.router.navigate(resp);
+			} else {
+				App.router.navigate('/login');
+			}
+		});
 };

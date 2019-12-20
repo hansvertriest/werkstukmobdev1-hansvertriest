@@ -3,7 +3,7 @@ import Game from './Game';
 
 class Crew {
 	constructor() {
-		this.crewCode = undefined; // string
+		this.crewCode = ''; // string
 		this.inGame = false;
 		this.moderator = undefined; // string
 		this.crewMembers = [];
@@ -15,8 +15,8 @@ class Crew {
 		return this.crewMembers.filter((member) => member.userId === userId)[0];
 	}
 
-	getModerator() {
-		return this.crewMembers.filter((member) => member.isModerator)[0];
+	playerIsModerator() {
+		return this.moderator;
 	}
 
 	// crew modification methods
@@ -37,11 +37,8 @@ class Crew {
 		}
 	}
 
-	setModerator(userId) {
-		if (this.crewCode !== undefined) {
-			this.getMemberById(userId).isModerator = true;
-			this.getMemberById(userId).emblem = this.moderatorEmblem;
-		}
+	setPlayerModerator(bool) {
+		this.moderator = bool;
 	}
 
 	resetCrew() {

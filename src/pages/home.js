@@ -33,6 +33,11 @@ const pageScript = (data) => {
 	EventController.addClickListener(joinBtnId, () => {
 		App.router.navigate('/join');
 	});
+
+	// Go to create page
+	EventController.addClickListener(createBtnId, () => {
+		App.router.navigate('/createInvite');
+	});
 };
 
 export default () => {

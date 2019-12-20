@@ -1,27 +1,23 @@
 import App from '../lib/App';
-import Page from '../lib/Page';
-import Player from '../lib/Player';
 import EventController from '../lib/EventController';
+import Page from '../lib/Page';
 import PageDataCollector from '../lib/PageDataCollector';
 import DataUploader from '../lib/DataUploader';
 import Crew from '../lib/Crew';
 
 const crewOverviewTemplate = require('../templates/crewOverview.hbs');
 
-const pageScript = () => {
+const pageScript = (data) => {
 	/* DOM variables */
 	const leaveBtnId = 'leaveBtn';
 
-	/* information refresh loop */
-
-	const data = PageDataCollector.dataCrewOverview();
 	App.render(crewOverviewTemplate({ data, leaveBtnId }));
 
 	/* Event listeners */
 
 	// Leave crew
 	EventController.addClickListener(leaveBtnId, () => {
-		DataUploader.leaveCrew(Player.crewCode);
+		DataUploader.leaveCrew(Crew.crewCode);
 	});
 
 	// check if game has started
@@ -32,23 +28,21 @@ const pageScript = () => {
 	App.router.navigate('/crewOverview');
 };
 
-export default () => {
-	/*
-	do checkups and start pageScript
-	*/
-	Page.checkAcces('/crewOverview')
-		.then((resp) => {
-			if (resp === true) {
-				PageDataCollector.dataCrewOverview()
-					.then((data) => {
-						// run script
-						pageScript(data);
-						App.router.navigate('/crewOverview');
-					});
-			} else if (typeof resp === 'string') {
-				App.router.navigate(resp);
-			} else {
-				App.router.navigate('/login');
-			}
-		});
+export default async () => {
+	const auth = await Page.checkAcces('/crewOverview');
+	if (auth === true) {
+		// check for updates in crewMembers
+		App.firebase.db.collection('crews').doc(Crew.crewCode)
+			.onSnapshot(async (doc) => {
+				// give the data to the collector and run page script
+				const result = doc.data();
+				const data = await PageDataCollector.dataCrewOverview(result.members);
+				pageScript(data);
+			});
+		App.router.navigate('/crewOverview');
+	} else if (typeof auth === 'string') {
+		App.router.navigate(auth);
+	} else {
+		App.router.navigate('/login');
+	}
 };

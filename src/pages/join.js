@@ -22,7 +22,7 @@ const pageScript = (data) => {
 	EventController.addClickListener(joinBtnId, () => {
 		const crewCode = document.getElementById(codeFieldId).value;
 		// check if crew exists
-		if (data.crewCodes.includes(crewCode) && App._firebase.getAuth().currentUser.email === 'test@test.com') {
+		if (data.crewCodes.includes(crewCode)) {
 			DataUploader.joinCrew(crewCode);
 		}
 	});
@@ -33,51 +33,36 @@ const pageScript = (data) => {
 	});
 };
 
-export default () => {
-	/*
-	clear all intervals
-	*/
-	Page.pageIntervals.forEach((interval) => clearInterval(interval));
+export default async () => {
+	const auth = await Page.checkAcces('/join');
+	if (auth === true) {
+		// listen if user has succesfully joined
+		const joinedListener = App.firebase.db.collection('users').doc(Player.userId)
+			.onSnapshot((doc) => {
+				const dataDoc = doc.data();
+				if (dataDoc.crewCode.length === 4) {
+					Player.joinCrew(dataDoc.crewCode);
+					joinedListener();
 
-	/*
-	do checkups and start pageScript
-	*/
-	Page.checkAcces('/join')
-		.then((resp) => {
-			if (resp) {
-				/* Data listener */
+					// listen if user has left
+					const leftListener = App.firebase.db.collection('users').doc(Player.userId)
+						.onSnapshot((doc2) => {
+							const dataDoc2 = doc2.data();
+							if (dataDoc2.crewCode.length !== 4) {
+								Player.leaveCrew(dataDoc2.crewCode);
+								leftListener();
+								App.router.navigate('/home');
+							}
+						});
+					App.router.navigate('/crewOverview');
+				}
+			});
 
-				// listen if user has joined
-				const joinedListener = App.firebase.db.collection('users').doc(Player.userId)
-					.onSnapshot((doc) => {
-						const dataDoc = doc.data();
-						if (dataDoc.crewCode.length === 4) {
-							Player.joinCrew(dataDoc.crewCode);
-							joinedListener();
-
-							// listen if user has left
-							const leftListener = App.firebase.db.collection('users').doc(Player.userId)
-								.onSnapshot((doc2) => {
-									const dataDoc2 = doc2.data();
-									if (dataDoc2.crewCode.length !== 4) {
-										Player.leaveCrew(dataDoc2.crewCode);
-										leftListener();
-										App.router.navigate('/home');
-									}
-								});
-							App.router.navigate('/crewOverview');
-						}
-						Player.crewCode = dataDoc.crewCode;
-					});
-
-				PageDataCollector.dataJoin()
-					.then((data) => {
-						pageScript(data);
-					});
-			} else if (typeof resp === 'string') {
-				App.router.navigate(resp);
-			} else {
-				App.router.navigate('/login');
-			}
-		});
+		const data = await PageDataCollector.dataJoin();
+		pageScript(data);
+	} else if (typeof auth === 'string') {
+		App.router.navigate(auth);
+	} else {
+		App.router.navigate('/login');
+	}
 };
