@@ -1,6 +1,5 @@
 import App from './App';
 import Player from './Player';
-import Crew from './Crew';
 
 class Page {
 	constructor() {
@@ -14,35 +13,21 @@ class Page {
 		this.currentPage = page;
 	}
 
-	loadPlayer() {
-		return new Promise((resolve) => {
-			Player.userId = App.firebase.getAuth().currentUser.uid;
-			// load player info
-			App.firebase.db.collection('users').doc(Player.userId).get()
-				.then((doc) => {
-					const playerInfo = doc.data();
-					Player.screenName = playerInfo.screenName;
-					Player.avatar = playerInfo.avatar;
-					Crew.crewCode = (playerInfo.crewCode === undefined) ? '' : playerInfo.crewCode;
-				})
-				.then(() => {
-					// check if player is moderator
-					if (Crew.crewCode !== '') {
-						App.firebase.db.collection('crews').doc(Crew.crewCode).get()
-							.then((doc) => {
-								if (doc.exists) {
-									const crew = doc.data();
-									if (crew.moderator === Player.userId) {
-										Crew.setPlayerModerator(true);
-									}
-								}
-								resolve();
-							});
-					} else {
-						resolve();
-					}
-				});
-		});
+	async loadPlayer() {
+		Player.userId = App.firebase.getAuth().currentUser.uid;
+		// load player info
+		const docPlayer = await App.firebase.db.collection('users').doc(Player.userId).get();
+		const playerInfo = docPlayer.data();
+		Player.screenName = playerInfo.screenName;
+		Player.avatar = playerInfo.avatar;
+		Player.crew.crewCode = (playerInfo.crewCode === undefined) ? '' : playerInfo.crewCode;
+		// check if player is moderator
+		if (Player.crew.crewCode !== '') {
+			const docCrewCode = await App.firebase.db.collection('crews').doc(Player.crew.crewCode).get();
+			if (docCrewCode.exists && docCrewCode.moderator === Player.userId) {
+				Player.crew.setPlayerModerator(true);
+			}
+		}
 	}
 
 	checkLoggedIn() {
@@ -79,7 +64,7 @@ class Page {
 						if (page === '/register' || page === '/login') {
 							console.log('ee');
 							resolve(false);
-						} else if (page === '/crewOverview' && Crew.crewCode === '') {
+						} else if (page === '/crewOverview' && Player.crew.crewCode === '') {
 							resolve('/home');
 						}
 						resolve(true);

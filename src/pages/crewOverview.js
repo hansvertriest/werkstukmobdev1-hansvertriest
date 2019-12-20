@@ -3,7 +3,6 @@ import EventController from '../lib/EventController';
 import Page from '../lib/Page';
 import Player from '../lib/Player';
 import DataUploader from '../lib/DataUploader';
-import Crew from '../lib/Crew';
 
 const crewOverviewTemplate = require('../templates/crewOverview.hbs');
 
@@ -17,11 +16,11 @@ const pageScript = (data) => {
 
 	// Leave crew
 	EventController.addClickListener(leaveBtnId, () => {
-		DataUploader.leaveCrew(Crew.crewCode);
+		DataUploader.leaveCrew(Player.crew.crewCode);
 	});
 
 	// check if game has started
-	if (Crew.inGame) {
+	if (Player.crew.inGame) {
 		App.router.navigate('/game');
 	}
 
@@ -49,7 +48,7 @@ const collectData = async (crewMemberIds) => {
 };
 
 const hasLeftCrewListener = () => {
-	if (Crew.crewCode !== '') {
+	if (Player.crew.crewCode !== '') {
 		App.firebase.db.collection('users').doc(Player.userId)
 			.onSnapshot((doc) => {
 				const dataDoc = doc.data();
@@ -65,7 +64,7 @@ export default async () => {
 	const auth = await Page.checkAcces('/crewOverview');
 	if (auth === true) {
 		// check for updates in crewMembers
-		App.firebase.db.collection('crews').doc(Crew.crewCode)
+		App.firebase.db.collection('crews').doc(Player.crew.crewCode)
 			.onSnapshot(async (doc) => {
 				// give the data to the collector and run page script
 				const result = doc.data();

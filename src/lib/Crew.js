@@ -1,7 +1,7 @@
 import CrewMember from './CrewMember';
 import Game from './Game';
 
-class Crew {
+export default class Crew {
 	constructor() {
 		this.crewCode = ''; // string
 		this.inGame = false;
@@ -62,5 +62,3 @@ class Crew {
 		}
 	}
 }
-
-export default new Crew();

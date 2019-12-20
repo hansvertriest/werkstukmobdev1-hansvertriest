@@ -1,10 +1,8 @@
 import App from '../lib/App';
 import EventController from '../lib/EventController';
-import DataUploader from '../lib/DataUploader';
 import Page from '../lib/Page';
 import Player from '../lib/Player';
-import Crew from '../lib/Crew';
-
+import DataUploader from '../lib/DataUploader';
 
 const createInviteTemplate = require('../templates/createInvite.hbs');
 
@@ -41,7 +39,7 @@ export default () => {
 		.then((resp) => {
 			if (resp === true) {
 				// if not already have crew => create one
-				if (Crew.crewCode.length !== 4 || !Crew.playerIsModerator()) {
+				if (Player.crew.crewCode.length !== 4 || !Player.crew.playerIsModerator()) {
 					DataUploader.createCrew();
 				}
 
@@ -49,8 +47,8 @@ export default () => {
 				const isCreated = App.firebase.db.collection('users').doc(Player.userId)
 					.onSnapshot((doc) => {
 						const playerInfo = doc.data();
-						if (playerInfo.crewCode === Crew.crewCode) {
-							pageScript({ crewCode: Crew.crewCode });
+						if (playerInfo.crewCode === Player.crew.crewCode) {
+							pageScript({ crewCode: Player.crew.crewCode });
 							isCreated();
 						}
 					});

@@ -6,6 +6,7 @@ class Player {
 		this.screenName = '';
 		this.avatar = '';
 		this.location = {};
+		this.crew = new Crew();
 	}
 
 	setParams(userId, screenName, avatar) {
@@ -22,12 +23,12 @@ class Player {
 	}
 
 	leaveCrew() {
-		Crew.crewCode = undefined;
-		Crew.resetCrew();
+		this.crew.crewCode = undefined;
+		this.crew.resetCrew();
 	}
 
 	joinCrew(crewCode) {
-		Crew.crewCode = crewCode;
+		this.crew.crewCode = crewCode;
 		// import all crew members
 	}
 }

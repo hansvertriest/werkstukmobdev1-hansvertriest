@@ -1,4 +1,3 @@
-import Crew from './Crew';
 import Game from './Game';
 import Player from './Player';
 
@@ -32,40 +31,40 @@ class DataSeeder {
 		}
 
 		// assign a moderator
-		if (Crew.crewCode !== undefined) {
+		if (Player.crew.crewCode !== undefined) {
 			this.assignModerator('0000');
 		}
 
 		// simulate leaves/joins
 		setTimeout(() => {
-			if (Crew.crewCode !== undefined) {
+			if (Player.crew.crewCode !== undefined) {
 				this.addCrewMember();
 				console.log('DATASEEDER: waiting 3 sec');
 			}
 		}, waitTime * 1000);
 
 		setTimeout(() => {
-			if (Crew.crewCode !== undefined) {
-				this.removeCrewMember(Crew.crewMembers[1].userId);
+			if (Player.crew.crewCode !== undefined) {
+				this.removeCrewMember(Player.crew.crewMembers[1].userId);
 				console.log('DATASEEDER: waiting 2 sec');
 			}
 		}, (waitTime * 1000) + 2000);
 
 		setTimeout(() => {
-			if (Crew.crewCode !== undefined) {
-				this.removeCrewMember(Crew.crewMembers[2].userId);
+			if (Player.crew.crewCode !== undefined) {
+				this.removeCrewMember(Player.crew.crewMembers[2].userId);
 				console.log('DATASEEDER: waiting 20 sec');
 			}
 		}, (waitTime * 1000) + 3000);
 		// start game
 		setTimeout(() => {
-			if (Crew.crewCode !== undefined) {
+			if (Player.crew.crewCode !== undefined) {
 				// set game settings
 				const gameMode = 'parasite';
 				const duration = 300;
 				const location = ['51.0873544', '3.6686911,15'];
 				const radius = 100;
-				const taggers = [Crew.crewMembers[0].userId];
+				const taggers = [Player.crew.crewMembers[0].userId];
 				this.setGameSettings(gameMode, duration, location, radius, taggers);
 				// start the game
 				this.initGame();
@@ -80,7 +79,7 @@ class DataSeeder {
 			this.updatePlayerLocation({ lat: 3.7239323, lon: 51.0570054 });
 			// update crew location
 			const locationObject = [];
-			Crew.crewMembers.forEach((member) => {
+			Player.crew.crewMembers.forEach((member) => {
 				const locationMember = {
 					userId: member.userId,
 					lon: 3.7218819,
@@ -104,20 +103,20 @@ class DataSeeder {
 	*/
 
 	joinCrew(crewCode) {
-		Crew.setCrewCode(crewCode);
-		Crew.addMember(Player.userId, Player.screenName, Player.avatar);
+		Player.crew.setCrewCode(crewCode);
+		Player.crew.addMember(Player.userId, Player.screenName, Player.avatar);
 	}
 
 	// this would be a listener for the crewLocations
 	// if a change in location of the player would happen => Player is also updated
 	updatePlayerLocation(locationObject) {
-		Crew.getMemberById('0000').location = locationObject;
+		Player.crew.getMemberById('0000').location = locationObject;
 		Player.location = locationObject;
 	}
 
 	updateLocationCrewMembers(locationObject) {
 		locationObject.forEach((location) => {
-			Crew.getMemberById(location.userId).setLocation(location.lon, location.lat);
+			Player.crew.getMemberById(location.userId).setLocation(location.lon, location.lat);
 		});
 	}
 
@@ -129,12 +128,12 @@ class DataSeeder {
 
 
 	addCrewMember() {
-		const userIds = Crew.crewMembers.map((member) => member.userId);
+		const userIds = Player.crew.crewMembers.map((member) => member.userId);
 		let userId = Math.floor(Math.random() * 100);
 		while (userIds.includes(userId)) {
 			userId = Math.floor(Math.random() * 100);
 		}
-		Crew.addMember(
+		Player.crew.addMember(
 			userId,
 			this.screenNames[Math.floor(Math.random() * this.screenNames.length)],
 			this.avatars[Math.floor(Math.random() * this.avatars.length)],
@@ -142,38 +141,40 @@ class DataSeeder {
 	}
 
 	removeCrewMember(userId) {
-		Crew.removeMember(userId);
+		Player.crew.removeMember(userId);
 	}
 
 	assignRandomModerator() {
 		// get random member
-		const randomMember = Crew.crewMembers[Math.floor(Math.random() * Crew.crewMembers.length)];
+		// eslint-disable-next-line max-len
+		const randomMember = Player.crew.crewMembers[Math.floor(Math.random() * Player.crew.crewMembers.length)];
 		// assign moderator
-		Crew.setModerator(randomMember.userId);
+		Player.crew.setModerator(randomMember.userId);
 	}
 
 	assignModerator(userId) {
-		Crew.getMemberById(userId).setModerator();
+		Player.crew.getMemberById(userId).setModerator();
 	}
 
 	setGameSettings() {
-		Game.setSettings('parasite', 300, ['51.0873544', '3.6686911,15'], 100, [Crew.crewMembers[0].userId]);
+		Game.setSettings('parasite', 300, ['51.0873544', '3.6686911,15'], 100, [Player.crew.crewMembers[0].userId]);
 	}
 
 	initGame() {
 		this.assignTagger('0000');
-		Crew.startGame();
+		Player.crew.startGame();
 	}
 
 	assignTagger(userId) {
-		Crew.getMemberById(userId).setModerator();
+		Player.crew.getMemberById(userId).setModerator();
 	}
 
 	assignRandomTagger() {
 		// get random member
-		const randomMember = Crew.crewMembers[Math.floor(Math.random() * Crew.crewMembers.length)];
+		// eslint-disable-next-line max-len
+		const randomMember = Player.crew.crewMembers[Math.floor(Math.random() * Player.crew.crewMembers.length)];
 		// assign moderator
-		Crew.setTagger(randomMember.userId);
+		Player.crew.setTagger(randomMember.userId);
 	}
 }
 

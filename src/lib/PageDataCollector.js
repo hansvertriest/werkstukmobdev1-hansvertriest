@@ -1,6 +1,5 @@
 
 import Player from './Player';
-import Crew from './Crew';
 import Game from './Game';
 
 /*
@@ -9,11 +8,11 @@ import Game from './Game';
 class PageDataCollector {
 	dataGame() {
 		const locationCrew = [];
-		Crew.crewMembers.forEach((member) => {
+		Player.crew.crewMembers.forEach((member) => {
 			locationCrew.push(member.location);
 		});
 
-		const isModerator = (Crew.moderator === Player.userId);
+		const isModerator = (Player.crew.moderator === Player.userId);
 		const isTagger = (Game.taggers.includes(Player.userId));
 		const currentTime = new Date(Date.now());
 		const endTime = new Date(Game.startTime - Game.duration);
@@ -21,7 +20,7 @@ class PageDataCollector {
 
 		// calculate distance from every tagger
 		const taggerLocations = Game.taggers.map((taggerId) => {
-			const tagger = Crew.getMemberById(taggerId);
+			const tagger = Player.crew.getMemberById(taggerId);
 			console.log(tagger);
 			const distance = {
 				userId: tagger.userId,
