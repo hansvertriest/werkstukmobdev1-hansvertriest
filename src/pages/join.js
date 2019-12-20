@@ -2,7 +2,6 @@ import App from '../lib/App';
 import EventController from '../lib/EventController';
 import Page from '../lib/Page';
 import Player from '../lib/Player';
-import PageDataCollector from '../lib/PageDataCollector';
 import DataUploader from '../lib/DataUploader';
 
 const joinTemplate = require('../templates/join.hbs');
@@ -33,6 +32,19 @@ const pageScript = (data) => {
 	});
 };
 
+const collectData = async () => {
+	const crewCodesFetch = await App.firebase.db.collection('crews').get()
+		.then((doc) => {
+			const crewCodes = doc.docs.map((document) => document.id);
+			return { crewCodes };
+		})
+		.catch((error) => {
+			console.log(error);
+			return null;
+		});
+	return crewCodesFetch;
+};
+
 export default async () => {
 	const auth = await Page.checkAcces('/join');
 	if (auth === true) {
@@ -43,22 +55,10 @@ export default async () => {
 				if (dataDoc.crewCode.length === 4) {
 					Player.joinCrew(dataDoc.crewCode);
 					joinedListener();
-
-					// listen if user has left
-					const leftListener = App.firebase.db.collection('users').doc(Player.userId)
-						.onSnapshot((doc2) => {
-							const dataDoc2 = doc2.data();
-							if (dataDoc2.crewCode.length !== 4) {
-								Player.leaveCrew(dataDoc2.crewCode);
-								leftListener();
-								App.router.navigate('/home');
-							}
-						});
 					App.router.navigate('/crewOverview');
 				}
 			});
-
-		const data = await PageDataCollector.dataJoin();
+		const data = await collectData();
 		pageScript(data);
 	} else if (typeof auth === 'string') {
 		App.router.navigate(auth);

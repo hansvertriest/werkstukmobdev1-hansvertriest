@@ -1,7 +1,7 @@
 import App from '../lib/App';
 import EventController from '../lib/EventController';
 import Page from '../lib/Page';
-import PageDataCollector from '../lib/PageDataCollector';
+import Player from '../lib/Player';
 import DataUploader from '../lib/DataUploader';
 import Crew from '../lib/Crew';
 
@@ -28,6 +28,39 @@ const pageScript = (data) => {
 	App.router.navigate('/crewOverview');
 };
 
+const collectData = async (crewMemberIds) => {
+	const crewArray = [];
+	const createArray = await new Promise((resolve) => {
+		crewMemberIds.forEach(async (memberId) => {
+			const doc = await App.firebase.db.collection('users').doc(memberId).get();
+			const member = doc.data();
+			const memberObject = {
+				userId: memberId,
+				screenName: member.screenName,
+				avatar: member.avatar,
+			};
+			crewArray.push(memberObject);
+			if (crewArray.length === crewMemberIds.length) {
+				resolve({ crew: crewArray });
+			}
+		});
+	});
+	return createArray;
+};
+
+const hasLeftCrewListener = () => {
+	if (Crew.crewCode !== '') {
+		App.firebase.db.collection('users').doc(Player.userId)
+			.onSnapshot((doc) => {
+				const dataDoc = doc.data();
+				if (dataDoc.crewCode.length !== 4) {
+					Player.leaveCrew(dataDoc.crewCode);
+					App.router.navigate('/home');
+				}
+			});
+	}
+};
+
 export default async () => {
 	const auth = await Page.checkAcces('/crewOverview');
 	if (auth === true) {
@@ -36,9 +69,10 @@ export default async () => {
 			.onSnapshot(async (doc) => {
 				// give the data to the collector and run page script
 				const result = doc.data();
-				const data = await PageDataCollector.dataCrewOverview(result.members);
+				const data = await collectData(result.members);
 				pageScript(data);
 			});
+		hasLeftCrewListener();
 		App.router.navigate('/crewOverview');
 	} else if (typeof auth === 'string') {
 		App.router.navigate(auth);

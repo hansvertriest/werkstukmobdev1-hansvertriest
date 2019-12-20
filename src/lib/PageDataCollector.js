@@ -1,4 +1,4 @@
-import App from './App';
+
 import Player from './Player';
 import Crew from './Crew';
 import Game from './Game';
@@ -7,56 +7,6 @@ import Game from './Game';
 	Contains a method per page that returns the necessary data for that particular page
 */
 class PageDataCollector {
-	dataCrewOverview(crewMemberId) {
-		return new Promise((resolve) => {
-			const crewArray = [];
-			const data = { crew: crewArray };
-			crewMemberId.forEach((memberId) => {
-				App.firebase.db.collection('users').doc(memberId).get()
-					.then((doc) => {
-						const member = doc.data();
-						const memberObject = {
-							userId: memberId,
-							screenName: member.screenName,
-							avatar: member.avatar,
-						};
-						crewArray.push(memberObject);
-					})
-					.then(() => {
-						// if everything is in crewArray => resolve
-						if (crewArray.length === crewMemberId.length) {
-							resolve(data);
-						}
-					});
-			});
-		});
-	}
-
-	dataHome() {
-		return new Promise((resolve) => {
-			App.firebase.db.collection('users').doc(Player.userId).get()
-				.then((doc) => {
-					resolve(doc.data());
-				})
-				.catch((error) => {
-					console.log(error);
-				});
-		});
-	}
-
-	dataJoin() {
-		return new Promise((resolve) => {
-			App.firebase.db.collection('crews').get()
-				.then((doc) => {
-					const crewCodes = doc.docs.map((document) => document.id);
-					resolve({ crewCodes });
-				})
-				.catch((error) => {
-					console.log(error);
-				});
-		});
-	}
-
 	dataGame() {
 		const locationCrew = [];
 		Crew.crewMembers.forEach((member) => {

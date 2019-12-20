@@ -47,21 +47,16 @@ const pageScript = () => {
 	});
 };
 
-export default () => {
-	/*
-	clear all intervals
-	*/
-	Page.pageIntervals.forEach((interval) => clearInterval(interval));
-
+export default async () => {
 	/*
 	do checkups and start pageScript
 	*/
-	Page.checkAcces('/login')
-		.then((resp) => {
-			if (resp) {
-				pageScript();
-			} else {
-				App.router.navigate('/home');
-			}
-		});
+	const auth = await Page.checkAcces('/login');
+	if (auth === true) {
+		pageScript();
+	} else if (typeof auth === 'string') {
+		App.router.navigate(auth);
+	} else {
+		App.router.navigate('/home');
+	}
 };

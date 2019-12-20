@@ -1,7 +1,7 @@
 import App from '../lib/App';
 import EventController from '../lib/EventController';
 import Page from '../lib/Page';
-import PageDataCollector from '../lib/PageDataCollector';
+import Player from '../lib/Player';
 
 const homeTemplate = require('../templates/home.hbs');
 
@@ -40,22 +40,22 @@ const pageScript = (data) => {
 	});
 };
 
-export default () => {
-	/*
-	do checkups and start pageScript
-	*/
-	Page.checkAcces('/home')
-		.then((resp) => {
-			if (resp) {
-				// get data
-				PageDataCollector.dataHome()
-					.then((data) => {
-						// run script
-						pageScript(data);
-						App.router.navigate('/home');
-					});
-			} else {
-				App.router.navigate('/login');
-			}
+const collectData = async () => {
+	const doc = await App.firebase.db.collection('users').doc(Player.userId).get()
+		.then((result) => result)
+		.catch((error) => {
+			console.log(error);
 		});
+	return doc.data();
+};
+
+export default async () => {
+	const auth = await Page.checkAcces('/home');
+	if (auth === true) {
+		const doc = await collectData();
+		pageScript(doc);
+		App.router.navigate('/home');
+	} else {
+		App.router.navigate('/login');
+	}
 };

@@ -7,7 +7,6 @@ class Page {
 		this.currentPage = undefined;
 		this.lastPage = '/home';
 		this.loggedIn = false;
-		this.pageIntervals = [];
 	}
 
 	setCurrentPage(page) {
@@ -78,6 +77,7 @@ class Page {
 				.then((resp) => {
 					if (resp) {
 						if (page === '/register' || page === '/login') {
+							console.log('ee');
 							resolve(false);
 						} else if (page === '/crewOverview' && Crew.crewCode === '') {
 							resolve('/home');

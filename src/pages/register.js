@@ -59,7 +59,7 @@ const pageScript = () => {
 	});
 };
 
-export default () => {
+export default async () => {
 	/*
 	clear all intervals
 	*/
@@ -68,12 +68,12 @@ export default () => {
 	/*
 	do checkups and start pageScript
 	*/
-	Page.checkAcces('/register')
-		.then((resp) => {
-			if (resp) {
-				pageScript();
-			} else {
-				App.router.navigate('/home');
-			}
-		});
+	const auth = await Page.checkAcces('/register');
+	if (auth) {
+		pageScript();
+	} else if (typeof auth === 'string') {
+		App.router.navigate(auth);
+	} else {
+		App.router.navigate('/home');
+	}
 };

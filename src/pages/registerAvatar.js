@@ -52,13 +52,13 @@ const pageScript = () => {
 	});
 };
 
-export default () => {
-	Page.checkAcces('/registerAvatar')
-		.then((resp) => {
-			if (resp === true) {
-				pageScript();
-			} else {
-				App.router.navigate('/home');
-			}
-		});
+export default async () => {
+	const auth = await Page.checkAcces('/registerAvatar');
+	if (auth === true) {
+		pageScript();
+	} else if (typeof auth === 'string') {
+		App.router.navigate(auth);
+	} else {
+		App.router.navigate('/home');
+	}
 };
