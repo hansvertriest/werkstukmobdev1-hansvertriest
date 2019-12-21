@@ -2,13 +2,22 @@ import App from './App';
 import Player from './Player';
 
 class DataUploader {
-	joinCrew(crewCode) {
+	async addNewUser(userId, screenName) {
+		await App.firebase.db.collection('users').doc(userId).set({
+			screenName, crewCode: '',
+		})
+			.catch((e) => {
+				console.log(e);
+			});
+	}
+
+	async joinCrew(crewCode) {
 		// leave current crew
 		if (Player.crew.crewCode !== '') {
-			this.leaveCrew(Player.crew.crewCode);
+			await this.leaveCrew(Player.crew.crewCode);
 		}
 		// add crewcode to user
-		App.firebase.db.collection('users').doc(Player.userId).update({
+		await App.firebase.db.collection('users').doc(Player.userId).update({
 			crewCode,
 		});
 		// add to crewMembers
@@ -18,67 +27,89 @@ class DataUploader {
 				members.push(Player.userId);
 				App.firebase.db.collection('crews').doc(crewCode).set({
 					members,
-				});
+				}, { merge: true });
 			});
+
+		// set listeners to update model
+		const playerListener = App.firebase.db.collection('users').doc(Player.userId).onSnapshot((docPlayer) => {
+			const playerInfo = docPlayer.data();
+			if (playerInfo.crewCode === crewCode) {
+				Player.joinCrew(playerInfo.crewCode);
+				console.log('Model update: crewCode');
+				playerListener();
+			}
+		});
+
+		const crewListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((docCrew) => {
+			const crewInfo = docCrew.data();
+			if (crewInfo.moderator === Player.userId && crewInfo.members.includes(Player.userId)) {
+				Player.crew.loadCrew(docCrew.id, crewInfo.moderator, crewInfo.members);
+				console.log('Model update: loaded crew');
+				crewListener();
+			}
+		});
 	}
 
-	leaveCrew(crewCode) {
+	async leaveCrew(crewCode) {
+		// delete user crew code
+		await App.firebase.db.collection('users').doc(Player.userId).update({
+			crewCode: '', moderator: false,
+		});
+
+		// delete userId in crewMembers
+		const crewDoc = await App.firebase.db.collection('crews').doc(crewCode).get();
+		const { members } = crewDoc.data();
+		const memberFiltered = members.filter((memberId) => memberId !== Player.userId);
+		await App.firebase.db.collection('crews').doc(crewCode).update({
+			members: memberFiltered,
+		});
+
 		// change captain
 		if (Player.crew.playerIsModerator()) {
-			this.assignNewModerator();
+			await this.assignNewModerator(crewCode);
 		}
+
+		// set listener to update model
+		const playerListener = App.firebase.db.collection('users').doc(Player.userId).onSnapshot(() => {
+			Player.leaveCrew();
+			console.log('Model update: left crew');
+			playerListener();
+		});
+	}
+
+	async deleteCrewCode() {
 		// delete user crew code
 		App.firebase.db.collection('users').doc(Player.userId).update({
 			crewCode: '',
 		});
-		// delete userId in crewMemebers
-		App.firebase.db.collection('crews').doc(crewCode).get()
-			.then((doc) => {
-				const { members } = doc.data();
-				const memberFiltered = members.filter((memberId) => memberId !== Player.userId);
 
-				App.firebase.db.collection('crews').doc(crewCode).set({
-					members: memberFiltered,
-				});
-			});
-	}
-
-	createCrew() {
-		return new Promise((resolve) => {
-			let crewCode;
-			App.firebase.db.collection('crews').get()
-				.then((doc) => {
-					const crewCodes = [];
-					doc.forEach((crew) => {
-						crewCodes.push(crew.id);
-					});
-
-					do {
-						crewCode = Math.floor((Math.random() * 8999) + 1000);
-					} while (crewCodes.includes(crewCode));
-				})
-				.then(() => {
-					App.firebase.db.collection('crews').doc(crewCode.toString()).set({
-						members: [],
-						moderator: Player.userId,
-					});
-				})
-				.then(() => {
-					this.joinCrew(crewCode.toString());
-					resolve();
-				});
+		// set listener to update model
+		const playerListener = App.firebase.db.collection('users').doc(Player.userId).onSnapshot(() => {
+			Player.leaveCrew();
+			console.log('Model update: left crew');
+			playerListener();
 		});
 	}
 
-	assignNewModerator() {
-		App.firebase.db.collection('crews').doc(Player.crew.crewCode).get()
-			.then((doc) => {
-				const crew = doc.data().members;
-				const randomIndex = Math.floor(Math.random() * crew.members.length);
-				App.firebase.db.collection('crews').doc(Player.crew.crewCode).set({
-					moderator: crew[randomIndex],
-				});
+	async createCrew(crewCode) {
+		// Update the crew document
+		await App.firebase.db.collection('crews').doc(crewCode).set({
+			members: [], moderator: Player.userId, inGame: false,
+		});
+		this.joinCrew(crewCode.toString());
+	}
+
+	async assignNewModerator(crewCode) {
+		const crewDoc = await App.firebase.db.collection('crews').doc(crewCode).get();
+		const crew = crewDoc.data().members;
+		if (crew.length > 0) {
+			const randomIndex = Math.floor(Math.random() * crew.length);
+			await App.firebase.db.collection('crews').doc(Player.crew.crewCode).update({
+				moderator: crew[randomIndex],
 			});
+		} else {
+			await App.firebase.db.collection('crews').doc(crewCode).delete();
+		}
 	}
 }
 

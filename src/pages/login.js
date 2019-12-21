@@ -19,7 +19,6 @@ const pageScript = () => {
 		googleBtnId,
 		errorContainerId,
 	}));
-	App.router.navigate('/login');
 
 	/* Event listeners */
 	// login
@@ -43,20 +42,16 @@ const pageScript = () => {
 				App.router.navigate('/home');
 			}).catch((error) => {
 				console.log(error.message);
+				document.getElementById(errorContainerId).innerText = error.message;
 			});
 	});
 };
 
 export default async () => {
-	/*
-	do checkups and start pageScript
-	*/
-	const auth = await Page.checkAcces('/login');
-	if (auth === true) {
+	const currentPage = '/login';
+	const init = await Page.initPage(currentPage);
+	if (init === currentPage) {
 		pageScript();
-	} else if (typeof auth === 'string') {
-		App.router.navigate(auth);
-	} else {
-		App.router.navigate('/home');
 	}
+	App.router.navigate(init);
 };

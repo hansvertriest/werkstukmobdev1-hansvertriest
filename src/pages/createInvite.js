@@ -34,29 +34,46 @@ const pageScript = (data) => {
 	});
 };
 
-export default () => {
-	Page.checkAcces('/createInvite')
-		.then((resp) => {
-			if (resp === true) {
-				// if not already have crew => create one
-				if (Player.crew.crewCode.length !== 4 || !Player.crew.playerIsModerator()) {
-					DataUploader.createCrew();
-				}
+/**
+ * Generates a new crewCode that isn't already in use
+ */
+const generateCrewCode = async () => {
+	// Get all existing crewCodes
+	let crewCode;
+	const crewCodesDoc = await App.firebase.db.collection('crews').get();
+	const crewCodes = [];
+	crewCodesDoc.forEach((crew) => {
+		crewCodes.push(crew.id);
+	});
+	// Generate codes while no unique code has ben generated
+	do {
+		crewCode = Math.floor((Math.random() * 8999) + 1000);
+	} while (crewCodes.includes(crewCode));
+	return crewCode;
+};
 
-				// Listen if crew has been created
-				const isCreated = App.firebase.db.collection('users').doc(Player.userId)
-					.onSnapshot((doc) => {
-						const playerInfo = doc.data();
-						if (playerInfo.crewCode === Player.crew.crewCode) {
-							pageScript({ crewCode: Player.crew.crewCode });
-							isCreated();
-						}
-					});
-				App.router.navigate('/createInvite');
-			} else if (typeof resp === 'string') {
-				App.router.navigate(resp);
-			} else {
-				App.router.navigate('/login');
+export default async () => {
+	const currentPage = '/createInvite';
+	const init = await Page.initPage(currentPage);
+	if (init === currentPage) {
+		let crewCode;
+		if (!Player.crew.playerIsModerator()) {
+			crewCode = await generateCrewCode();
+			crewCode = crewCode.toString();
+			DataUploader.createCrew(crewCode);
+			Player.joinCrew(crewCode);
+		} else {
+			crewCode = Player.crew.crewCode;
+			console.log(crewCode);
+		}
+		const crewCreatedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
+			if (doc.exists && doc.data().moderator === Player.userId) {
+				Player.joinCrew(crewCode);
+				pageScript({ crewCode: Player.crew.crewCode });
+				crewCreatedListener();
 			}
+			console.log(doc.data());
 		});
+	}
+	App.router.navigate(currentPage);
 };

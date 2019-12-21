@@ -10,7 +10,7 @@ export default () => {
 	const sendBtnId = 'sendBtn';
 	const backBtnId = 'backBtn';
 
-	Page.checkAcces('/newPassword');
+	Page.initPage('/newPassword');
 	App.render(newPasswordTemplate({ emailFieldId, sendBtnId, backBtnId }));
 	App.router.navigate('/newPassword');
 

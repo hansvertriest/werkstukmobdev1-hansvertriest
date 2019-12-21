@@ -15,7 +15,6 @@ const pageScript = () => {
 	const goLeftBtnId = 'goLeftBtn';
 	const goRightBtnId = 'geRightBtn';
 
-	Page.checkAcces('/registerAvatar');
 	App.render(registerAvatarTemplate({
 		avatar,
 		chooseBtnId,
@@ -53,12 +52,9 @@ const pageScript = () => {
 };
 
 export default async () => {
-	const auth = await Page.checkAcces('/registerAvatar');
-	if (auth === true) {
+	const currentPage = '/registerAvatar';
+	const init = await Page.initPage('/registerAvatar');
+	if (init === currentPage) {
 		pageScript();
-	} else if (typeof auth === 'string') {
-		App.router.navigate(auth);
-	} else {
-		App.router.navigate('/home');
 	}
 };

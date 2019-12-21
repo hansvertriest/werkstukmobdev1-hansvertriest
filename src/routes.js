@@ -24,6 +24,8 @@ import Createoverview from './pages/createOverview';
 import Createsettings from './pages/createSettings';
 import Taggedparasite from './pages/taggedParasite';
 import Taggedplague from './pages/taggedPlague';
+import Backcrewlist from './pages/backCrewList';
+import Backcrewdetail from './pages/backCrewDetail';
 
 export default [
 	{ path: '/home', view: HomePage },
@@ -50,5 +52,7 @@ export default [
 	{ path: '/createSettings', view: Createsettings },
 	{ path: '/taggedParasite', view: Taggedparasite },
 	{ path: '/taggedPlague', view: Taggedplague },
+	{ path: '/backCrewList', view: Backcrewlist },
+	{ path: '/backCrewDetail', view: Backcrewdetail },
 	{ path: '/mapbox', view: MapboxPage },
 ];

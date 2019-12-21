@@ -6,7 +6,7 @@ const passwordSentTemplate = require('../templates/passwordSent.hbs');
 export default () => {
 	const email = 'hans.vertriest@gmail.com';
 
-	Page.checkAcces('/passwordSent');
+	Page.initPage('/passwordSent');
 	App.render(passwordSentTemplate({ email }));
 	App.router.navigate('/passwordSent');
 };

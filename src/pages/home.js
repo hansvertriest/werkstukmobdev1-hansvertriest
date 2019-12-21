@@ -23,6 +23,7 @@ const pageScript = (data) => {
 	// logout
 	EventController.addClickListener(logOutBtnId, () => {
 		App._firebase.getAuth().signOut().then(() => {
+			Page.resetModel();
 			App.router.navigate('/login');
 		}, (error) => {
 			console.log(error);
@@ -40,6 +41,9 @@ const pageScript = (data) => {
 	});
 };
 
+/**
+ * @description Collects the data necessary for this page
+ */
 const collectData = async () => {
 	const doc = await App.firebase.db.collection('users').doc(Player.userId).get()
 		.then((result) => result)
@@ -50,12 +54,11 @@ const collectData = async () => {
 };
 
 export default async () => {
-	const auth = await Page.checkAcces('/home');
-	if (auth === true) {
+	const currentPage = '/home';
+	const init = await Page.initPage(currentPage);
+	if (init === currentPage) {
 		const doc = await collectData();
 		pageScript(doc);
-		App.router.navigate('/home');
-	} else {
-		App.router.navigate('/login');
 	}
+	App.router.navigate(init);
 };

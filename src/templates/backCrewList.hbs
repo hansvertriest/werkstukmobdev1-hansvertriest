@@ -1,0 +1,12 @@
+<h1>Crew List</h1>
+<ul class="m-crew-list">
+	{{#with data}}
+	{{#each crews}}
+	{{#with this}}
+	<li class="a-crew-list__crew" id="{{crewCode}}">{{crewCode}}</li>
+	{{/with}}
+	{{/each}}
+	{{/with}}
+</ul>
+
+<button class="a-backend__button" id="{{deleteFictionalUsersBtnId}}">Delete all fictional users</button>
