@@ -1,0 +1,29 @@
+.a-prim-btn__btn-text {
+	font-family: "Orbitron";
+	font-size: $font-size-btn-primary;
+	line-height: 28px;
+	text-align: center;
+	letter-spacing: 0.1em;
+
+	color: $color-primary-btn-text;
+
+	text-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+.a-google-btn__icon {
+	background-image: url("/assets/icons/fontawesome/google-brands.png");
+	background-size: cover;
+	width: 30px;
+	height: 26px;
+	color: $color-sec-btn-text;
+}
+
+.a-sec-btn_text, .a-google-btn__text {
+	font-family: "Orbitron";
+	font-weight: 400;
+	font-size: $font-size-btn-secondary;
+	line-height: 23px;
+	letter-spacing: 0.1em;
+	text-align: center;
+	width: 100%;
+}

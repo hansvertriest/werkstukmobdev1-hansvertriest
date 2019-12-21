@@ -1,13 +1,15 @@
 <div class="o-app-container">
 	<h1 class="a-h1">register</h1>
 	<div class="o-register-form">
-		{{> inputfield input_title="Screen name" input_id=nameFieldId  }}
-		{{> inputfield input_title="Email" input_id=emailFieldId }}
-		{{> inputfield input_title="Password" input_id=passwordFieldId }}
-		<p class="a-register-form__error-container" id={{errorContainerId}}></p>
+		<div class="o-register-form__input-fields">
+			{{> inputfield input_title="Screen name" input_id=nameFieldId  }}
+			{{> inputfield input_title="Email" input_id=emailFieldId }}
+			{{> inputfield input_title="Password" input_id=passwordFieldId }}
+			<p class="a-register-form__error-container" id={{errorContainerId}}></p>
+		</div>	
 		{{> primaryButton btn_txt="Submit" btn_id=submitBtnId }}
 		{{> googleButton btn_id=googleBtnId }}
-		<div class="m-login-form__account-links">
+		<div class="m-register-form__account-links">
 			<a href="./#!/login" class="a-account-links__no-account">I already have an account</a>
 		</div>
 	</div>

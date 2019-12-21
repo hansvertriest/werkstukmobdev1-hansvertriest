@@ -20,6 +20,8 @@ module.exports = (env, argv) => {
 		// set the mode of our project
 		mode: argv.mode,
 
+		watch: true,
+
 		// your main js file
 		entry: ['@babel/polyfill', path.resolve(__dirname, 'src/app.js')],
 

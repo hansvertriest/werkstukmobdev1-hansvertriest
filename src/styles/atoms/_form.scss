@@ -1,0 +1,35 @@
+.a-input-container__input_field {
+	background: rgba(27, 157, 180, 0.34);
+	border: 2px solid #28ADB5;
+	box-sizing: border-box;
+	box-shadow: 0 0 8px rgba(40, 173, 181, 0.58), inset 0 0 2px rgba(0, 0, 0, 0.79);
+	border-radius: 2px;
+	height: 3.2rem;
+	width: 100%;
+}
+
+.a-input-container__input-title {
+	font-family: "Orbitron";
+	font-style: normal;
+	font-weight: 400;
+	font-size: $font-size-base;
+	line-height: 23px;
+	color: $color-white-text;
+	margin: 25px 0 10px;
+}
+
+.m-login-form__account-links {
+	align-self: space-between;
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	width: 100%;
+
+	a {
+		margin-bottom: 20px;
+	}
+}
+
+.a-register-form__error-container, .a-login-form__error-container {
+	color: $color-error;
+}

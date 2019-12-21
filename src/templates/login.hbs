@@ -1,9 +1,11 @@
 <div class="o-app-container">
 	<h1 class="a-h1">login</h1>
 	<div class="o-login-form">
-		{{> inputfield input_title="Email" input_id=emailFieldId }}
-		{{> inputfield input_title="Password" input_id=passwordFieldId  }}
-		<p class="a-login-form__error-container" id={{errorContainerId}}></p>
+		<div class="o-login-form__input-fields">
+			{{> inputfield input_title="Email" input_id=emailFieldId }}
+			{{> inputfield input_title="Password" input_id=passwordFieldId  }}
+			<p class="a-login-form__error-container" id={{errorContainerId}}></p>
+		</div>		
 		{{> primaryButton btn_txt="Submit" btn_id=submitBtnId  }}
 		{{> googleButton btn_id=googleBtnId }}
 		<div class="m-login-form__account-links">

@@ -1,0 +1,14 @@
+.o-register-form, .o-login-form {
+	width: 100%;
+	max-width: 400px;
+	max-height: 700px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.o-login-form__input-fields, .o-register-form__input-fields {
+	width: 100%;
+	margin-bottom: 20px;
+}
