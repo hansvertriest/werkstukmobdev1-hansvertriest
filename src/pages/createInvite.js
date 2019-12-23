@@ -12,6 +12,7 @@ const pageScript = (data) => {
 	const navIdInvite = 'invite';
 	const navIdOverview = 'overview';
 	const navIdSettings = 'settings';
+	const backBtnId = 'backBtn';
 
 	App.render(createInviteTemplate({
 		data,
@@ -20,9 +21,13 @@ const pageScript = (data) => {
 		navIdInvite,
 		navIdOverview,
 		navIdSettings,
+		backBtnId,
 	}));
 	App.router.navigate('/createInvite');
 
+	/* Event lsiteners */
+
+	// navigation
 	EventController.addClickListener(navIdInvite, () => {
 		App.router.navigate('/createInvite');
 	});
@@ -31,6 +36,16 @@ const pageScript = (data) => {
 	});
 	EventController.addClickListener(navIdSettings, () => {
 		App.router.navigate('/createSettings');
+	});
+
+	// Go back
+	EventController.addClickListener(backBtnId, () => {
+		App.router.navigate(Page.lastPage);
+	});
+
+	// start game
+	EventController.addClickListener(playBtnId, async () => {
+		await DataUploader.startGame(Player.crew.crewCode);
 	});
 };
 
@@ -55,6 +70,7 @@ const generateCrewCode = async () => {
 export default async () => {
 	const currentPage = '/createInvite';
 	const init = await Page.initPage(currentPage);
+	console.log(Player.crew.playerIsModerator());
 	if (init === currentPage) {
 		let crewCode;
 		if (!Player.crew.playerIsModerator()) {
@@ -64,7 +80,6 @@ export default async () => {
 			Player.joinCrew(crewCode);
 		} else {
 			crewCode = Player.crew.crewCode;
-			console.log(crewCode);
 		}
 		const crewCreatedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
 			if (doc.exists && doc.data().moderator === Player.userId) {
@@ -72,7 +87,6 @@ export default async () => {
 				pageScript({ crewCode: Player.crew.crewCode });
 				crewCreatedListener();
 			}
-			console.log(doc.data());
 		});
 	}
 	App.router.navigate(currentPage);

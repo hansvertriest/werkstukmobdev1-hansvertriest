@@ -73,7 +73,8 @@ class Page {
 			const docCrew = await App.firebase.db.collection('crews').doc(Player.crew.crewCode).get();
 			if (docCrew.exists) {
 				const crewInfo = docCrew.data();
-				Player.crew.loadCrew(Player.crew.crewCode, crewInfo.moderator, crewInfo.members);
+				const isModerator = (crewInfo.moderator === Player.userId);
+				Player.crew.loadCrew(Player.crew.crewCode, isModerator, crewInfo.members);
 			}
 		}
 		this.modelIsLoaded = true;
@@ -84,6 +85,8 @@ class Page {
 	 * @param {*} page current page
 	 */
 	async initPage(page) {
+		console.log(`Routed to ${page}`);
+		console.log(Player.crew.crewCode);
 		// check if player has been loaded
 		if (!this.modelIsLoaded) {
 			// check if player is logged in
@@ -108,9 +111,13 @@ class Page {
 			}
 		}
 		// if page =  player is not yet in a crew
-		const crewRestrictedPages = ['/crewOverview', '/game'];
-		if (crewRestrictedPages.includes(page) && Player.crew.crewCode === '') {
+		const crewOnlyPages = ['/crewOverview', '/game'];
+		if (crewOnlyPages.includes(page) && Player.crew.crewCode === '') {
 			return '/home';
+		}
+		// if page = crewOverview but player is a moderator
+		if (page === '/crewOverview' && Player.crew.playerIsModerator()) {
+			return '/createOverview';
 		}
 		// if page = a login/registerPage
 		const signUpPages = ['/login', '/register', '/registerAvatar'];
@@ -119,6 +126,9 @@ class Page {
 		}
 		// if page = join but player is already in a crew
 		if (page === '/join' && Player.crew.crewCode !== '') {
+			if (Player.crew.playerIsModerator()) {
+				return page;
+			}
 			return '/crewOverview';
 		}
 		return page;

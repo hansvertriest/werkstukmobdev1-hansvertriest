@@ -37,7 +37,6 @@ class Player {
 	 * @description sets creCode to '' and resets the crew parameters
 	 */
 	leaveCrew() {
-		this.crew.crewCode = '';
 		this.crew.resetCrew();
 	}
 

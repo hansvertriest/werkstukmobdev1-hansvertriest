@@ -1,12 +1,12 @@
-import Game from './Game';
-
 export default class Crew {
 	constructor() {
 		this.crewCode = ''; // string
 		this.inGame = false;
 		this.moderator = false; // string
+		this.taggers = [];
 		this.crewMembers = [];
 		this.moderatorEmblem = 'shield-alt-solid';
+		this.settings = {};
 	}
 
 	/**
@@ -48,7 +48,7 @@ export default class Crew {
 	 * @description resets all parameters of this crew
 	 */
 	resetCrew() {
-		this.crewCode = undefined; // string
+		this.crewCode = ''; // string
 		this.inGame = false;
 		this.moderator = undefined; // string
 		this.crewMembers = [];
@@ -67,13 +67,29 @@ export default class Crew {
 		this.crewMembers = crewMembers;
 	}
 
+	/**
+	 * @description sets the settings of the crew to the specified values
+	 * @param {*} gameMode
+	 * @param {*} duration
+	 * @param {*} radius
+	 * @param {*} centerpoint
+	 * @param {*} taggers
+	 */
+	setSettings(gameMode, duration, radius, centerPoint, taggers) {
+		this.settings = {
+			gameMode,
+			duration,
+			radius,
+			centerPoint,
+			taggers,
+		};
+	}
+
 	// crew actions
 	/**
 	 * @description sets inGame parameter of crew to true
 	 */
 	startGame() {
-		if (Game.isSet) {
-			this.inGame = true;
-		}
+		this.inGame = true;
 	}
 }

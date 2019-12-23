@@ -18,11 +18,20 @@ const pageScript = (data) => {
 	/* Event listeners */
 
 	// Join crew
-	EventController.addClickListener(joinBtnId, () => {
+	EventController.addClickListener(joinBtnId, async () => {
 		const crewCode = document.getElementById(codeFieldId).value;
 		// check if crew exists
 		if (data.crewCodes.includes(crewCode)) {
-			DataUploader.joinCrew(crewCode);
+			await DataUploader.joinCrew(crewCode);
+
+			// listen if user has succesfully joined
+			const joinedListener = await App.firebase.db.collection('users').doc(Player.userId).onSnapshot((doc) => {
+				const dataDoc = doc.data();
+				if (dataDoc.crewCode !== '') {
+					App.router.navigate('/crewOverview');
+					joinedListener();
+				}
+			});
 		}
 	});
 
@@ -52,15 +61,6 @@ export default async () => {
 	const currentPage = '/join';
 	const init = await Page.initPage(currentPage);
 	if (init === currentPage) {
-		// listen if user has succesfully joined
-		const joinedListener = App.firebase.db.collection('users').doc(Player.userId).onSnapshot((doc) => {
-			const dataDoc = doc.data();
-			if (dataDoc.crewCode !== '') {
-				Player.joinCrew(dataDoc.crewCode);
-				joinedListener();
-				App.router.navigate('/crewOverview');
-			}
-		});
 		const data = await collectData();
 		pageScript(data);
 	}

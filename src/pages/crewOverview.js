@@ -30,7 +30,6 @@ const pageScript = (data) => {
 const collectData = async (crewMemberIds) => {
 	const moderatorDoc = await App.firebase.db.collection('crews').doc(Player.crew.crewCode).get();
 	const { moderator } = moderatorDoc.data();
-	console.log(moderator);
 	const crewArray = [];
 	const createArray = await new Promise((resolve) => {
 		crewMemberIds.forEach(async (memberId) => {
@@ -63,17 +62,17 @@ export default async () => {
 		const crewUpdateListener = await App.firebase.db.collection('crews').doc(crewCode).onSnapshot(async (doc) => {
 			if (doc.exists) {
 				const result = doc.data();
-				// check if player is still in crew otherwise he/she already left
-				// and we can shut down the listener
+				// check if player is in the crew otherwise terminate the listener
 				if (result.members && result.members.includes(Player.userId)) {
 					const data = await collectData(result.members);
 					pageScript(data);
 				} else {
-					App.router.navigate('/home');
+					crewUpdateListener();
 				}
 			} else {
 				DataUploader.deleteCrewCode(crewCode);
 				App.router.navigate('/home');
+				crewUpdateListener();
 			}
 		});
 
