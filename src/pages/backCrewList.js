@@ -1,4 +1,5 @@
 import App from '../lib/App';
+import Page from '../lib/Page';
 import EventController from '../lib/EventController';
 import Backend from '../lib/Backend';
 
@@ -36,7 +37,11 @@ const collectData = async () => {
 };
 
 export default async () => {
-	const data = await collectData();
-	pageScript(data);
-	App.router.navigate('/backCrewList');
+	const currentPage = '/backCrewList';
+	const init = await Page.initPage(currentPage);
+	if (init === currentPage) {
+		const data = await collectData();
+		pageScript(data);
+	}
+	App.router.navigate(init);
 };

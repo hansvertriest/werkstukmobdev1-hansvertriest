@@ -21,6 +21,10 @@ class DataUploader {
 	 * @param {*} crewCode
 	 */
 	async joinCrew(crewCode) {
+		// leave crew
+		if (Player.crew.crewCode !== '') {
+			await this.leaveCrew(Player.crew.crewCode);
+		}
 		// add crewcode to user
 		await App.firebase.db.collection('users').doc(Player.userId).update({
 			crewCode,
@@ -125,6 +129,8 @@ class DataUploader {
 				radius: 50,
 				centerpoint: [3.7239323, 51.0570054],
 			},
+			taggers: [],
+			location: [],
 		});
 		this.joinCrew(crewCode.toString());
 	}
@@ -138,7 +144,7 @@ class DataUploader {
 		const crew = crewDoc.data().members;
 		if (crew.length > 0) {
 			const randomIndex = Math.floor(Math.random() * crew.length);
-			await App.firebase.db.collection('crews').doc(Player.crew.crewCode).update({
+			await App.firebase.db.collection('crews').doc(crewCode).update({
 				moderator: crew[randomIndex],
 			});
 		} else {
@@ -184,15 +190,8 @@ class DataUploader {
 		});
 
 		// set listener to update model
-		const updateGame = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
-			const { settings } = doc.data();
-			if (settings.inGame) {
-				Player.crew.startGame();
-				updateGame();
-			}
-		});
 
-		App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
+		await App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
 			const { settings } = doc.data();
 			Player.crew.setSettings(
 				settings.gameMode,
@@ -201,6 +200,16 @@ class DataUploader {
 				settings.centerpoint,
 				doc.data().taggers,
 			);
+			console.log('Model update: set settings');
+		});
+
+		await App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
+			const { inGame, taggers } = doc.data();
+			if (inGame) {
+				Player.crew.startGame();
+				Player.crew.setTaggers(taggers);
+				console.log('Model update: started game and added taggers');
+			}
 		});
 	}
 }

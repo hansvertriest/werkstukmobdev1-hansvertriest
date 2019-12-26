@@ -26,6 +26,7 @@ import Taggedparasite from './pages/taggedParasite';
 import Taggedplague from './pages/taggedPlague';
 import Backcrewlist from './pages/backCrewList';
 import Backcrewdetail from './pages/backCrewDetail';
+import Permissiondenied from './pages/permissionDenied';
 
 export default [
 	{ path: '/home', view: HomePage },
@@ -54,5 +55,6 @@ export default [
 	{ path: '/taggedPlague', view: Taggedplague },
 	{ path: '/backCrewList', view: Backcrewlist },
 	{ path: '/backCrewDetail', view: Backcrewdetail },
+	{ path: '/permissionDenied', view: Permissiondenied },
 	{ path: '/mapbox', view: MapboxPage },
 ];

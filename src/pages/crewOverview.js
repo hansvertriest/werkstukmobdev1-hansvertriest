@@ -76,18 +76,30 @@ export default async () => {
 			}
 		});
 
-		// check for game to start
-		const gameHasStartedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot(async (doc) => {
-			if (doc.exists) {
-				const result = doc.data();
-				if (result.inGame) {
-					// INSERT: begin game
-					crewUpdateListener();
-					gameHasStartedListener();
-					console.log('STARTED');
+		if (!Player.crew.inGame) {
+			// listen if game has started
+			const gameStartedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
+				const { inGame, taggers } = doc.data();
+				if (inGame && taggers.length !== 0) {
+					if (taggers.includes(Player.userId)) {
+						App.router.navigate('/gameStart');
+					} else if (inGame) {
+						App.router.navigate('/game');
+					}
+					gameStartedListener();
 				}
-			}
-		});
+			});
+		} else {
+			// listen if game has stopped
+			const gameStartedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
+				const { inGame } = doc.data();
+				if (!inGame) {
+					// stop the fame
+					console.log('Game stopped');
+					gameStartedListener();
+				}
+			});
+		}
 	}
 	App.router.navigate(init);
 };

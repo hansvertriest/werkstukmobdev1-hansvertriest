@@ -85,6 +85,10 @@ export default class Crew {
 		};
 	}
 
+	setTaggers(taggersArray) {
+		this.taggers = taggersArray;
+	}
+
 	// crew actions
 	/**
 	 * @description sets inGame parameter of crew to true

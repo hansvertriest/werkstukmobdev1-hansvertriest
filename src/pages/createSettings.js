@@ -74,7 +74,7 @@ const collectData = (settings) => {
 };
 
 export default async () => {
-	const currentPage = '/crewOverview';
+	const currentPage = '//createSettings';
 	const init = await Page.initPage(currentPage);
 	if (init === currentPage) {
 		// check for updates in crewMembers

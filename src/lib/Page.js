@@ -1,5 +1,6 @@
 import App from './App';
 import Player from './Player';
+import Backend from './Backend';
 
 class Page {
 	constructor() {
@@ -86,7 +87,6 @@ class Page {
 	 */
 	async initPage(page) {
 		console.log(`Routed to ${page}`);
-		console.log(Player.crew.crewCode);
 		// check if player has been loaded
 		if (!this.modelIsLoaded) {
 			// check if player is logged in
@@ -109,6 +109,16 @@ class Page {
 			} if (page !== '/register' && page !== '/login' && page !== '/registerAvatar') {
 				return '/login';
 			}
+		}
+		// if page = bakcend
+		const backendPages = ['/backCrewList', '/backCrewDetail'];
+		if (backendPages.includes(page) && Player.userId === 'QDSWJu9rahSu5j1na9TpcmiHkMy1') {
+			return page;
+		} else if (backendPages.includes(page)) {
+			Backend.listeners.forEach((interval) => {
+				clearInterval(interval);
+			});
+			return '/permissionDenied';
 		}
 		// if page =  player is not yet in a crew
 		const crewOnlyPages = ['/crewOverview', '/game'];

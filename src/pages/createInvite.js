@@ -46,6 +46,7 @@ const pageScript = (data) => {
 	// start game
 	EventController.addClickListener(playBtnId, async () => {
 		await DataUploader.startGame(Player.crew.crewCode);
+		console.log(Player.crew.taggers);
 	});
 };
 
@@ -70,7 +71,6 @@ const generateCrewCode = async () => {
 export default async () => {
 	const currentPage = '/createInvite';
 	const init = await Page.initPage(currentPage);
-	console.log(Player.crew.playerIsModerator());
 	if (init === currentPage) {
 		let crewCode;
 		if (!Player.crew.playerIsModerator()) {
@@ -81,6 +81,8 @@ export default async () => {
 		} else {
 			crewCode = Player.crew.crewCode;
 		}
+
+		// listen if crew has been created
 		const crewCreatedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
 			if (doc.exists && doc.data().moderator === Player.userId) {
 				Player.joinCrew(crewCode);
@@ -88,6 +90,31 @@ export default async () => {
 				crewCreatedListener();
 			}
 		});
+
+		if (!Player.crew.inGame) {
+			// listen if game has started
+			const gameStartedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
+				const { inGame, taggers } = doc.data();
+				if (inGame && taggers.length !== 0) {
+					if (taggers.includes(Player.userId)) {
+						App.router.navigate('/gameStart');
+					} else if (inGame) {
+						App.router.navigate('/game');
+					}
+					gameStartedListener();
+				}
+			});
+		} else {
+			// listen if game has stopped
+			const gameStartedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
+				const { inGame } = doc.data();
+				if (!inGame) {
+					// stop the fame
+					console.log('Game stopped');
+					gameStartedListener();
+				}
+			});
+		}
 	}
 	App.router.navigate(currentPage);
 };
