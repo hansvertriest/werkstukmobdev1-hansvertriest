@@ -44,7 +44,7 @@ const pageScript = (data) => {
 
 	// start game
 	EventController.addClickListener(playBtnId, async () => {
-		await DataUploader.startGame(Player.crew.crewCode);
+		await DataUploader.startGame(Player.crew.crewCode, 'parasite');
 	});
 };
 
@@ -95,6 +95,7 @@ export default async () => {
 				App.router.navigate('/home');
 			}
 		});
+		Page.createListeners.push(settingsUpdateListener);
 
 		// check for game to start
 		const gameHasStartedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot(async (doc) => {
@@ -108,6 +109,7 @@ export default async () => {
 				}
 			}
 		});
+		Page.createListeners.push(gameHasStartedListener);
 	}
 	App.router.navigate('/createSettings');
 };

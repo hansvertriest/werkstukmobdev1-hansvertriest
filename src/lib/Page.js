@@ -7,6 +7,9 @@ class Page {
 		this.currentPage = undefined;
 		this.lastPage = '/home';
 		this.modelIsLoaded = false;
+		this.createListeners = [];
+		this.gameListeners = [];
+		this.gameIntervals = [];
 	}
 
 	/**
@@ -34,6 +37,22 @@ class Page {
 		Player.resetParams();
 		Player.crew.resetParams();
 		this.modelIsLoaded = false;
+	}
+
+	changeInnerText(elementId, innerText) {
+		document.getElementById(elementId).innerText = innerText;
+	}
+
+	async checkGeolocation() {
+		return new Promise((resolve) => {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(() => {
+					resolve();
+				});
+			} else {
+				console.log('no geo');
+			}
+		});
 	}
 
 	/**
@@ -87,6 +106,20 @@ class Page {
 	 */
 	async initPage(page) {
 		console.log(`Routed to ${page}`);
+		// clear listeners
+		this.createListeners.forEach((listener) => {
+			listener();
+		});
+		Backend.listeners.forEach((listener) => {
+			listener();
+		});
+		this.gameListeners.forEach((listener) => {
+			listener();
+		});
+		this.gameIntervals.forEach((interval) => {
+			clearInterval(interval);
+		});
+
 		// check if player has been loaded
 		if (!this.modelIsLoaded) {
 			// check if player is logged in

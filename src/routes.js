@@ -27,6 +27,8 @@ import Taggedplague from './pages/taggedPlague';
 import Backcrewlist from './pages/backCrewList';
 import Backcrewdetail from './pages/backCrewDetail';
 import Permissiondenied from './pages/permissionDenied';
+import Backmap from './pages/backMap';
+import Taggedconfirm from './pages/taggedConfirm';
 
 export default [
 	{ path: '/home', view: HomePage },
@@ -56,5 +58,7 @@ export default [
 	{ path: '/backCrewList', view: Backcrewlist },
 	{ path: '/backCrewDetail', view: Backcrewdetail },
 	{ path: '/permissionDenied', view: Permissiondenied },
+	{ path: '/backMap', view: Backmap },
+	{ path: '/taggedConfirm', view: Taggedconfirm },
 	{ path: '/mapbox', view: MapboxPage },
 ];

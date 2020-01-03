@@ -11,7 +11,8 @@ const pageScript = (data) => {
 	const forceStartButtonId = 'forceStartButton';
 	const status = (data.inGame) ? 'in game' : 'waiting for start';
 	const startStopInnerText = (data.inGame) ? 'stop game' : 'start game';
-	console.log(data);
+	const simulateGameId = 'simulateGame';
+	const mapBtnId = 'mapBtn';
 
 	App.render(backCrewDetailTemplate({
 		data,
@@ -19,6 +20,8 @@ const pageScript = (data) => {
 		forceStartButtonId,
 		status,
 		startStopInnerText,
+		simulateGameId,
+		mapBtnId,
 	}));
 
 	/* Eventlisteners */
@@ -36,11 +39,29 @@ const pageScript = (data) => {
 
 	// delete user
 	data.members.forEach((member) => {
-		console.log(member);
 		const id = `a-delete-${member.userId}`;
 		EventController.addClickListener(id, () => {
 			Backend.deleteUserFromCrew(Backend.crewCode, member.userId);
 		});
+	});
+
+	// add as tagger
+	data.members.forEach((member) => {
+		const id = `a-addTagger-${member.userId}`;
+		EventController.addClickListener(id, () => {
+			Backend.addTagger(Backend.crewCode, member.userId);
+		});
+	});
+
+
+	// start simulation
+	EventController.addClickListener(simulateGameId, () => {
+		Backend.simulateGame();
+	});
+
+	// go to map
+	EventController.addClickListener(mapBtnId, () => {
+		App.router.navigate('/backMap');
 	});
 };
 /**
@@ -58,7 +79,6 @@ const collectData = async (crewInfo) => {
 				screenName: userInfo.screenName,
 				avatar: userInfo.avatar,
 			});
-			console.log(crewMembers.length);
 			if (crewMembers.length === crewInfo.members.length) {
 				resolve();
 			}
@@ -68,6 +88,7 @@ const collectData = async (crewInfo) => {
 		crewCode: Backend.crewCode,
 		members: crewMembers,
 		inGame: crewInfo.inGame,
+		centerpoint: crewInfo.settings.centerpoint,
 	};
 	return data;
 };
@@ -78,11 +99,14 @@ export default async () => {
 	if (init === currentPage) {
 		// listen if something changes in crewDoc
 		const listenCrew = await App.firebase.db.collection('crews').doc(Backend.crewCode).onSnapshot(async (crewsDoc) => {
-			const crewInfo = crewsDoc.data();
-			console.log(crewInfo);
-			if (crewInfo.members.length !== 0) {
-				const data = await collectData(crewInfo);
-				pageScript(data);
+			if (crewsDoc.exists) {
+				const crewInfo = crewsDoc.data();
+				if (crewInfo.members.length !== 0) {
+					const data = await collectData(crewInfo);
+					pageScript(data);
+				}
+			} else {
+				App.router.navigate('/home');
 			}
 		});
 		Backend.listeners.push(listenCrew);

@@ -45,7 +45,7 @@ const pageScript = (data) => {
 
 	// start game
 	EventController.addClickListener(playBtnId, async () => {
-		await DataUploader.startGame(Player.crew.crewCode);
+		await DataUploader.startGame(Player.crew.crewCode, 'parasite');
 		console.log(Player.crew.taggers);
 	});
 };
@@ -90,6 +90,7 @@ export default async () => {
 				crewCreatedListener();
 			}
 		});
+		Page.createListeners.push(crewCreatedListener);
 
 		if (!Player.crew.inGame) {
 			// listen if game has started
@@ -104,16 +105,18 @@ export default async () => {
 					gameStartedListener();
 				}
 			});
+			Page.createListeners.push(gameStartedListener);
 		} else {
 			// listen if game has stopped
-			const gameStartedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
+			const gameStoppedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
 				const { inGame } = doc.data();
 				if (!inGame) {
 					// stop the fame
 					console.log('Game stopped');
-					gameStartedListener();
+					gameStoppedListener();
 				}
 			});
+			Page.createListeners.push(gameStoppedListener);
 		}
 	}
 	App.router.navigate(currentPage);

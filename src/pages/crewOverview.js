@@ -6,7 +6,7 @@ import DataUploader from '../lib/DataUploader';
 
 const crewOverviewTemplate = require('../templates/crewOverview.hbs');
 
-const pageScript = (data) => {
+const pageScript = async (data) => {
 	/* DOM variables */
 	const leaveBtnId = 'leaveBtn';
 
@@ -20,7 +20,18 @@ const pageScript = (data) => {
 		App.router.navigate('/home');
 	});
 
-	App.router.navigate('/crewOverview');
+	// listen if game has started
+	const gameStartedListener = await App.firebase.db.collection('crews').doc(Player.crew.crewCode).onSnapshot((doc) => {
+		const { inGame, taggers } = doc.data();
+		if (inGame && taggers.length !== 0) {
+			if (taggers.includes(Player.userId)) {
+				App.router.navigate('/gameStart');
+			} else if (inGame) {
+				App.router.navigate('/game');
+			}
+			gameStartedListener();
+		}
+	});
 };
 
 /**
@@ -57,8 +68,8 @@ export default async () => {
 	const currentPage = '/crewOverview';
 	const init = await Page.initPage(currentPage);
 	if (init === currentPage) {
-		// check for updates in crewMembers
 		const { crewCode } = Player.crew;
+		// check for updates in crewMembers
 		const crewUpdateListener = await App.firebase.db.collection('crews').doc(crewCode).onSnapshot(async (doc) => {
 			if (doc.exists) {
 				const result = doc.data();
@@ -67,6 +78,7 @@ export default async () => {
 					const data = await collectData(result.members);
 					pageScript(data);
 				} else {
+					App.router.navigate('/home');
 					crewUpdateListener();
 				}
 			} else {
@@ -74,32 +86,8 @@ export default async () => {
 				App.router.navigate('/home');
 				crewUpdateListener();
 			}
+			App.router.navigate(init);
 		});
-
-		if (!Player.crew.inGame) {
-			// listen if game has started
-			const gameStartedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
-				const { inGame, taggers } = doc.data();
-				if (inGame && taggers.length !== 0) {
-					if (taggers.includes(Player.userId)) {
-						App.router.navigate('/gameStart');
-					} else if (inGame) {
-						App.router.navigate('/game');
-					}
-					gameStartedListener();
-				}
-			});
-		} else {
-			// listen if game has stopped
-			const gameStartedListener = App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
-				const { inGame } = doc.data();
-				if (!inGame) {
-					// stop the fame
-					console.log('Game stopped');
-					gameStartedListener();
-				}
-			});
-		}
+		Page.gameListeners.push(crewUpdateListener);
 	}
-	App.router.navigate(init);
 };

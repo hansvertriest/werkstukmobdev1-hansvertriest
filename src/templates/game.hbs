@@ -1,10 +1,10 @@
-
-<div class="o-gmae__header">
+<div class="o-app-container">
+<p id="debug"></p>
+<div class="a-game__map" id="{{mapId}}" style="width: 100vw; height: 50vh;"></div>
+<div class="o-game__header">
 	<div class="o-header__left">
-		{{#with data}}
-		<p class="a-left__timer">{{ time }}</p>
-		<p class="a-text"> <span class="a-important-number">{{distanceToAlien}}m</span> to alien</p>
-		{{/with}}
+		<p class="a-left__timer" id="{{timerId}}"></p>
+		<p class="a-text"> <span class="a-important-number" id="distance"></span> to alien</p>
 	</div>
 	<div class="o-header__right">
 		<div class="m-right__buttonMsg" id="{{buttonMsgId}}"><div class="a-buttonMsg_icon" style="background-image: url(../../assets/icons/fontawesome/comment-dots-regular.svg); width: 32px; height:32px; background-size: cover;"></div></div>
@@ -31,4 +31,5 @@
 	{{/if}}
 	{{/with}}
 	
+</div>
 </div>

@@ -17,6 +17,7 @@ const pageScript = (data) => {
 	data.crews.forEach((crew) => {
 		EventController.addClickListener(crew.crewCode, () => {
 			Backend.crewCode = crew.crewCode;
+			Backend.gameMode = 'parasite';
 			App.router.navigate('/backCrewDetail');
 		});
 	});

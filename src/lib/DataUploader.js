@@ -148,56 +148,77 @@ class DataUploader {
 				moderator: crew[randomIndex],
 			});
 		} else {
+			// delete the crew doc and locations collection
 			await App.firebase.db.collection('crews').doc(crewCode).delete();
+			await App.firebase.db.collection('crews').doc(crewCode).collection('locations').delete();
 		}
 	}
 
+	/**
 	/**
 	 * @description sets the specified user as the tagger of the specified crew in db
 	 * @param {*} members
 	 * @param {*} crewCode
 	 * @param {*} taggers
 	 */
-	async addTagger(crewCode, userId) {
-		// set taggers
-		await App.firebase.db.collection('crews').doc(crewCode).get()
-			.then((doc) => {
-				let { taggers } = doc.data();
-				if (taggers !== undefined) {
-					taggers.push(userId);
-				} else {
-					taggers = [userId];
-				}
-				App.firebase.db.collection('crews').doc(crewCode).set({
-					taggers,
-				}, { merge: true });
-			});
+	async addTagger(crewCode, userId, gameMode) {
+		// define the new tagger array
+		if (gameMode === 'plague') {
+			const doc = await App.firebase.db.collection('crews').doc(crewCode).get();
+			let { taggers } = doc.data();
+			if (taggers !== undefined) {
+				taggers.push(userId);
+			} else {
+				taggers = [userId];
+			}
+			App.firebase.db.collection('crews').doc(crewCode).set({
+				taggers,
+			}, { merge: true });
+		} else if (gameMode === 'parasite') {
+			const crewDoc = await App.firebase.db.collection('crews').doc(crewCode).get();
+			const { taggers } = crewDoc.data();
+			// set old taggers Db
+			App.firebase.db.collection('crews').doc(crewCode).set({
+				previousTaggers: taggers,
+			}, { merge: true });
+			App.firebase.db.collection('crews').doc(crewCode).set({
+				taggers: [userId],
+			}, { merge: true });
+		}
 	}
 
 	/**
 	 * @description initializes and starts the game
 	 * @param {*} crewCode
 	 */
-	async startGame(crewCode) {
-		// choose tagger
+	async startGame(crewCode, gameMode) {
+		// get crew information
 		const crewDoc = await App.firebase.db.collection('crews').doc(crewCode).get();
-		const { members } = crewDoc.data();
+		const { members, settings } = crewDoc.data();
+
+		// choose tagger
 		const randomIndex = Math.floor(Math.random() * members.length);
-		await this.addTagger(Player.crew.crewCode, members[randomIndex]);
+		await this.addTagger(Player.crew.crewCode, members[randomIndex], gameMode);
+
 		// set inGame to true
 		await App.firebase.db.collection('crews').doc(crewCode).update({
 			inGame: true,
 		});
 
-		// set listener to update model
+		// set start date
+		settings.startDate = new Date();
+		await App.firebase.db.collection('crews').doc(crewCode).update({
+			settings,
+		});
 
+		// set listener to update model
 		await App.firebase.db.collection('crews').doc(crewCode).onSnapshot((doc) => {
-			const { settings } = doc.data();
+			const updatedSettins = doc.data().settings;
 			Player.crew.setSettings(
-				settings.gameMode,
-				settings.duration,
-				settings.radius,
-				settings.centerpoint,
+				updatedSettins.gameMode,
+				updatedSettins.duration,
+				updatedSettins.radius,
+				updatedSettins.centerpoint,
 				doc.data().taggers,
 			);
 			console.log('Model update: set settings');
@@ -211,6 +232,21 @@ class DataUploader {
 				console.log('Model update: started game and added taggers');
 			}
 		});
+	}
+
+	async stopGame(crewCode) {
+		await App.firebase.db.collection('crews').doc(crewCode).update({
+			inGame: false,
+			previousTaggers: [],
+		});
+	}
+
+	async changePlayerLocation(lon, lat) {
+		await App.firebase.db.collection('crews').doc(Player.crew.crewCode).collection('locations').doc(Player.userId)
+			.set({
+				lon,
+				lat,
+			});
 	}
 }
 

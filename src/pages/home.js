@@ -22,7 +22,7 @@ const pageScript = (data) => {
 
 	// logout
 	EventController.addClickListener(logOutBtnId, () => {
-		App._firebase.getAuth().signOut().then(() => {
+		App._firebase.getAuth().signOut().then(async () => {
 			Page.resetModel();
 			App.router.navigate('/login');
 		}, (error) => {
